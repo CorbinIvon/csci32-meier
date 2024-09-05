@@ -1,3 +1,12 @@
+This week:
+Adds a fun and interactive button. Will use in future projects!
+
+The developer can set `onHover`, `onClick`, and `default` attributes, with an optional `audioSrc` file to play when the button is clicked on.
+
+https://github.com/user-attachments/assets/7cca8b05-d227-4938-ad97-72c95e4c7808
+
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
