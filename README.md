@@ -1,6 +1,6 @@
 # csci32-meier
 
-This repository is for the CSCI 32 course at Butte College, Oroville California. It will contain all the code and assignments for the course.
+This repository is for the CSCI 32 course at Butte College, Oroville California. This repository contains all the code for assignments thorough the course.
 
 This is a test repo for multiple project deployment in a single repository, potentially paving the way for future class projects. It effectively shows weekly work progress in a single Vercel deployment.
 
