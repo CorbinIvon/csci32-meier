@@ -1,3 +1,4 @@
+// csci32-meier/src/app/components/client/actions/AnimatedImageButton.tsx
 'use client'
 
 import React, { useState } from 'react'
@@ -16,7 +17,7 @@ interface AnimatedImageProps {
   className?: string
 }
 
-export default function AnimatedImage({
+export default function AnimatedImageButton({
   defaultImage,
   hoverImage,
   clickedImage,
