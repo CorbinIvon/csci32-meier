@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react'
 import CollapsibleMenu from '@/components/client/navigation/CollapsibleMenu'
 import Avatar from '@/components/client/data_display/Avatar'
 // Import the JSON data
-import resourceCatalogue from './data/resource-catalogue.json'
+import resourceCatalogue from '@/app/data/resource-catalogue.json'
 
 export default function HomePage() {
   const [baseUrl, setBaseUrl] = useState<string | null>(null)
@@ -98,35 +98,14 @@ export default function HomePage() {
 
         {/* Main content on the right */}
         <main className="flex-1 p-6">
-          <h2 className="text-2xl font-semibold">Welcome to Corbin's Online Resource Center</h2>
+          <h2 className="text-2xl font-semibold">My Components</h2>
           <section className="Introduction m-4">
             <h3 className="text-xl font-semibold">Introduction</h3>
             <p className="mb-4">
-              For as long as I can remember, I've had a vision of creating a method to catalogue all of my thoughts and
-              things. From personal files, notes, and ideas to external resources. It was apparent that there were
-              plenty of tools available online, but nothing that fit my specific needs. It became clear that I needed a
-              custom and simple solution to organize and access all of my digital resources. This page is that solution.
+              Below is a list of components that I've created for NextJS. These will have a use at some point in my
+              lifetime. I hope you enjoy them!
             </p>
-            <p>This project is open source and available to everyone. Installation instructions on Github.</p>
-          </section>
-          <section className="Features m-4">
-            <h3 className="text-xl font-semibold">Features</h3>
-            <ul className="list-disc pl-6">
-              <li>Simple and easy-to-use interface</li>
-              <li>Collapsible menu for easy navigation</li>
-              <li>Infinite navigation nesting</li>
-              <li>Searchable content</li>
-              <li>Well structured database</li>
-              <li>Responsive design for all device types</li>
-            </ul>
-          </section>
-          <section className="HowToUse m-4">
-            <h3 className="text-xl font-semibold">How To Use</h3>
-            <p>
-              Simply click through the navigation on the left of the screen. For mobile users, the navigation will be
-              located from the top-left tab. Click on the links to view the content. If you have any questions or
-              feedback, please feel free to reach out to me through github. Enjoy!
-            </p>
+            <hr />
           </section>
         </main>
       </div>
