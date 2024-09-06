@@ -6,7 +6,7 @@ import PageLayout from '@/components/client/PageLayout'
 const HomePage = () => {
   return (
     <PageLayout>
-      <h2 className="text-2xl font-semibold">Welcome to Corbin's Online Resource Center</h2>
+      <h2 className="text-2xl font-semibold">Welcome to Corbin&apos;s Online Resource Center</h2>
       <section className="Introduction m-4">
         <h3 className="text-xl font-semibold">Introduction</h3>
         <p className="mb-4">
