@@ -62,7 +62,7 @@
               "title": "Components Libraries",
               "items": [{ "label": "daisyui", "url": "https://daisyui.com/docs/install/" }]
             },
-            { "label": "My Components", "url": "/" }
+            { "label": "My Components", "url": "/pages/programming/NextJS/MyComponents" }
           ]
         }
       ]
