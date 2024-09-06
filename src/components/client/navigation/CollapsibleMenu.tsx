@@ -27,10 +27,13 @@ const Collapsible: React.FC<CollapsibleProps> = ({ title, items }) => {
             item.url ? (
               <a
                 key={index}
-                href={item.url}
-                className="block text-blue-500 hover:underline mb-1"
+                href={item.url === '/' ? undefined : item.url} // If url is '/', set href to undefined
+                className={`block hover:underline mb-1 ${
+                  item.url === '/' ? 'text-red-500 cursor-not-allowed' : 'text-blue-500'
+                }`}
                 target={item.url.startsWith('http') ? '_blank' : '_self'}
                 rel={item.url.startsWith('http') ? 'noopener noreferrer' : undefined}
+                onClick={item.url === '/' ? (e) => e.preventDefault() : undefined} // Prevent click for '/'
               >
                 {item.label}
               </a>
