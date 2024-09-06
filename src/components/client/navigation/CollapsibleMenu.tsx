@@ -1,4 +1,4 @@
-// csci32-meier/src/app/components/client/navigation/CollapsibleMenu.tsx
+// csci32-meier/src/components/client/navigation/CollapsibleMenu.tsx
 
 'use client'
 
@@ -29,8 +29,8 @@ const Collapsible: React.FC<CollapsibleProps> = ({ title, items }) => {
                 key={index}
                 href={item.url}
                 className="block text-blue-500 hover:underline mb-1"
-                target={item.url.startsWith(window.location.origin) ? '_self' : '_blank'}
-                rel="noopener noreferrer"
+                target={item.url.startsWith('http') ? '_blank' : '_self'}
+                rel={item.url.startsWith('http') ? 'noopener noreferrer' : undefined}
               >
                 {item.label}
               </a>
