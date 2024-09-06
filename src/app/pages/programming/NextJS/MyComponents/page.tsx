@@ -6,6 +6,7 @@ import CollapsibleMenu from '@/components/client/navigation/CollapsibleMenu'
 import Avatar from '@/components/client/data_display/Avatar'
 // Import the JSON data
 import resourceCatalogue from '@/app/data/resource-catalogue.json'
+import AnimatedImageButton from '@/components/client/actions/AnimatedImageButton'
 
 export default function HomePage() {
   const [baseUrl, setBaseUrl] = useState<string | null>(null)
@@ -106,6 +107,23 @@ export default function HomePage() {
               lifetime. I hope you enjoy them!
             </p>
             <hr />
+          </section>
+          <section className="Components m-4">
+            <h3 className="text-xl font-semibold">Components</h3>
+            <div className="inline-flex flex-col border">
+              <p className="text-center font-extrabold">Animated Image Button With Audio</p>
+              <AnimatedImageButton
+                defaultImage="/images/bongo.default.png"
+                hoverImage="/images/bongo.onHover.png"
+                clickedImage="/images/bongo.onClick.png"
+                navigateTo=""
+                audioSrc="/audio/bongo.wav"
+                className="shadow-md rounded-3xl"
+                alt="Interactive Image"
+                width={400}
+                height={400}
+              />
+            </div>
           </section>
         </main>
       </div>
