@@ -30,20 +30,18 @@ const HomePage = () => {
       </section>
       <section className="HowToUse m-4">
         <h3 className="text-xl font-semibold">How To Use</h3>
-        <p>
-          About the links: Links are color coded.
-          <ul className="list-disc pl-6">
-            <li>
-              <span className="text-blue-500">Blue</span> links are internal links to other pages on this site.
-            </li>
-            <li>
-              <span className="text-orange-300">Orange</span> links are external links to other websites.
-            </li>
-            <li>
-              <span className="text-red-500">Red</span> links are links that are not yet implemented.
-            </li>
-          </ul>
-        </p>
+        <p>About the links: Links are color coded.</p>
+        <ul className="list-disc pl-6">
+          <li>
+            <span className="text-blue-500">Blue</span> links are internal links to other pages on this site.
+          </li>
+          <li>
+            <span className="text-orange-300">Orange</span> links are external links to other websites.
+          </li>
+          <li>
+            <span className="text-red-500">Red</span> links are links that are not yet implemented.
+          </li>
+        </ul>
         <p>
           Simply click through the navigation on the left of the screen. For mobile users, the navigation will be
           located from the top-left tab. Click on the links to view the content. If you have any questions or feedback,
