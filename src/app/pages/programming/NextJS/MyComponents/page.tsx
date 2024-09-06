@@ -11,7 +11,7 @@ const Programming_NextJS_My_Components = () => {
       <section className="Introduction m-4">
         <h3 className="text-xl font-semibold">Introduction</h3>
         <p className="mb-4">
-          Below is a list of components that I've created for NextJS. These will have a use at some point in my
+          Below is a list of components that I&apos;ve created for NextJS. These will have a use at some point in my
           lifetime. I hope you enjoy them!
         </p>
         <hr />

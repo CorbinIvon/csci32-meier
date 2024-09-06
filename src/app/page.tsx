@@ -10,7 +10,7 @@ const HomePage = () => {
       <section className="Introduction m-4">
         <h3 className="text-xl font-semibold">Introduction</h3>
         <p className="mb-4">
-          For as long as I can remember, I've had a vision of creating a method to catalogue all of my thoughts and
+          For as long as I can remember, I&apos;ve had a vision of creating a method to catalogue all of my thoughts and
           things. From personal files, notes, and ideas to external resources. It was apparent that there were plenty of
           tools available online, but nothing that fit my specific needs. It became clear that I needed a custom and
           simple solution to organize and access all of my digital resources. This page is that solution.
