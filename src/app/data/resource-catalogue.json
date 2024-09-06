@@ -1,0 +1,74 @@
+{
+  "catalogue": [
+    {
+      "title": "Self-Hosting",
+      "items": [
+        { "label": "How to self host", "url": "/" },
+        {
+          "title": "Tools",
+          "items": [
+            { "label": "Docker", "url": "/" },
+            {
+              "title": "Research ToDo",
+              "items": [
+                { "label": "Portainer", "url": "/" },
+                { "label": "Traefik", "url": "/" },
+                { "label": "Watchtower", "url": "/" },
+                { "label": "Wordpress", "url": "/" }
+              ]
+            },
+            {
+              "title": "My Favorites",
+              "items": [
+                { "label": "Gitea", "url": "https://about.gitea.com/" },
+                { "label": "Jellyfin", "url": "https://jellyfin.org/" },
+                { "label": "Calibre-Web", "url": "https://github.com/janeczku/calibre-web" },
+                { "label": "Nextcloud", "url": "https://nextcloud.com/" },
+                { "label": "mariadb", "url": "https://mariadb.org/" },
+                { "label": "Crafty Controler", "url": "https://craftycontrol.com/" },
+                { "label": "BookStack", "url": "https://www.bookstackapp.com/" },
+                { "label": "pihole", "url": "https://pi-hole.net/" }
+              ]
+            },
+            { "label": "PHP", "url": "/" }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Thought Bubbles",
+      "items": [
+        {
+          "title": "Game Design",
+          "items": [
+            {
+              "title": "Core Mechanics",
+              "items": [
+                { "label": "Unique Crafting Systems", "url": "/" },
+                { "label": "Electrical System", "url": "/" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Programming",
+      "items": [
+        {
+          "title": "NextJS",
+          "items": [
+            {
+              "title": "Components Libraries",
+              "items": [{ "label": "daisyui", "url": "https://daisyui.com/docs/install/" }]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Learning",
+      "items": []
+    }
+  ]
+}
