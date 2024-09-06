@@ -29,7 +29,11 @@ const Collapsible: React.FC<CollapsibleProps> = ({ title, items }) => {
                 key={index}
                 href={item.url === '/' ? undefined : item.url} // If url is '/', set href to undefined
                 className={`block hover:underline mb-1 ${
-                  item.url === '/' ? 'text-red-500 cursor-not-allowed' : 'text-blue-500'
+                  item.url === '/'
+                    ? 'text-red-500 cursor-not-allowed' // Broken / Undefined Links
+                    : item.url.startsWith('http')
+                      ? 'text-orange-300' // External Links
+                      : 'text-blue-500' // Internal Links
                 }`}
                 target={item.url.startsWith('http') ? '_blank' : '_self'}
                 rel={item.url.startsWith('http') ? 'noopener noreferrer' : undefined}
