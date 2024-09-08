@@ -1,12 +1,17 @@
 {
   "name": "@repo/sso",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
-    "./GoogleSignInButton": "./src/GoogleSignInButton.tsx"
+    ".": "./dist/index.js",
+    "./GoogleSignInButton": "./dist/GoogleSignInButton.js"
   },
   "scripts": {
+    "build": "tsc",
     "lint": "eslint . --max-warnings 0",
+    "dev": "tsc --watch",
     "generate:component": "turbo gen react-component"
   },
   "devDependencies": {
@@ -21,6 +26,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "firebase": "^10.13.1",
     "next-auth": "^4.24.7",
     "react": "^18.2.0"
   }

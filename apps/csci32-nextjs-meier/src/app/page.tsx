@@ -1,5 +1,3 @@
-// csci32-meier/src/app/page.tsx
-
 import React from 'react'
 import PageLayout from '@/components/client/PageLayout'
 

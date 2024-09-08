@@ -1,8 +1,7 @@
-// csci32-meier/src/app/page.tsx
-
 import React from 'react'
 import PageLayout from '@/components/client/PageLayout'
 import AnimatedImageButton from '@/components/client/actions/AnimatedImageButton'
+import GoogleSignInButton from '@sso/GoogleSignInButton'
 
 const Programming_NextJS_My_Components = () => {
   return (
@@ -31,6 +30,10 @@ const Programming_NextJS_My_Components = () => {
             width={400}
             height={400}
           />
+        </div>
+        <div className="inline-flex flex-col border">
+          <p>An easy to implement google sign in button</p>
+          <GoogleSignInButton />
         </div>
       </section>
     </PageLayout>
