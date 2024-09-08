@@ -15,6 +15,16 @@ const Programming_NextJS_My_Components = () => {
         </p>
         <hr />
       </section>
+      <section className="Quick_Links m-4">
+        <p>Here is a list of links to more components.</p>
+        <ul className="list-disc pl-6">
+          <li>
+            <a href="/pages/programming/NextJS/MyComponents/buttons" className=" text-blue-600 underline">
+              Buttons
+            </a>
+          </li>
+        </ul>
+      </section>
       <section className="Components m-4">
         <h3 className="text-xl font-semibold">Components</h3>
         <div className="inline-flex flex-col border">
