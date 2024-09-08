@@ -1,0 +1,22 @@
+{
+  "name": "@repo/sso",
+  "type": "module",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc"
+  },
+  "exports": {
+    "./login": {
+      "types": "./src/login.ts",
+      "default": "./dist/login.js"
+    },
+    "./logout": {
+      "types": "./src/logout.ts",
+      "default": "./dist/logout.js"
+    }
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "typescript": "latest"
+  }
+}
