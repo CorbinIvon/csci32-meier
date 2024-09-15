@@ -13,8 +13,9 @@
     "./button": "./src/button.tsx",
     "./card": "./src/card.tsx",
     "./code": "./src/code.tsx",
-    "./variant": "./src/variant.tsx",
-    "./size": "./src/size.tsx"
+    "./variant": "./src/variant.ts",
+    "./size": "./src/size.ts",
+    "./tokens": "./src/tokens.ts"
   },
   "scripts": {
     "build": "tailwindcss -i ./styles.css -o ./dist/index.css",
