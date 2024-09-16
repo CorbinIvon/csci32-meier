@@ -6,7 +6,7 @@ import { Button } from '@repo/ui/src/button'
 import { Size } from '@repo/ui/src/size'
 import { Variant } from '@repo/ui/src/variant'
 
-const csci32_assignment_week_4 = () => {
+const Csci32AssignmentWeek4 = () => {
   const [inputValueName, setInputValueName] = useState('')
   const [inputValueFavoriteAnimal, setInputValueFavoriteAnimal] = useState('')
   const [inputValueHighestScore, setInputValueHighestScore] = useState('')
@@ -95,4 +95,4 @@ const csci32_assignment_week_4 = () => {
   )
 }
 
-export default csci32_assignment_week_4
+export default Csci32AssignmentWeek4
