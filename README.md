@@ -8,6 +8,14 @@ npm install
 npm run dev
 ```
 
+Run the following from the root of the project:
+
+```node
+turbo run build
+```
+
+This will build all the packages in the project.
+
 # Turborepo starter
 
 This is an official starter Turborepo.

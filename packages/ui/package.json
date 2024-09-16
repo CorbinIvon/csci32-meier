@@ -15,7 +15,8 @@
     "./code": "./src/code.tsx",
     "./variant": "./src/variant.ts",
     "./size": "./src/size.ts",
-    "./tokens": "./src/tokens.ts"
+    "./tokens": "./src/tokens.ts",
+    "./input": "./src/input.tsx"
   },
   "scripts": {
     "build": "tailwindcss -i ./styles.css -o ./dist/index.css",

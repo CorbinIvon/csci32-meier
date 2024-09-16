@@ -1,8 +1,8 @@
 'use client'
 
 import { ReactNode } from 'react'
-import getSizeStyles, { Size } from './size'
-import getVariantStyles, { Variant } from './variant'
+import { getSizeStyles, Size } from './size'
+import { getVariantBackgroundStyles, Variant } from './variant'
 import { getCommonStyles } from './tokens'
 
 interface ButtonProps {
@@ -22,9 +22,7 @@ export const Button = ({
   size = Size.MEDIUM,
   variant = Variant.PRIMARY,
 }: ButtonProps) => {
-  const sizeClasses = getSizeStyles(size)
-  const variantClasses = getVariantStyles(variant)
-  const customClassName = `${sizeClasses} ${variantClasses} ${getCommonStyles} ${className}`
+  const customClassName = `${getCommonStyles} ${getSizeStyles(size)} ${getVariantBackgroundStyles(variant)} ${className}`
 
   return href ? (
     <a href={href} onClick={onClick} className={customClassName}>
