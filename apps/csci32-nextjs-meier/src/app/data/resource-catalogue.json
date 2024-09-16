@@ -1,6 +1,15 @@
 {
   "catalogue": [
     {
+      "title": "CSCI-32 Assignments by week",
+      "items": [
+        { "label": "Week 1", "url": "/pages/CSCI32Assignments/week1" },
+        { "label": "Week 2", "url": "/pages/CSCI32Assignments/week2" },
+        { "label": "Week 3", "url": "/pages/CSCI32Assignments/week3" },
+        { "label": "Week 4", "url": "/pages/CSCI32Assignments/week4" }
+      ]
+    },
+    {
       "title": "Self-Hosting",
       "items": [
         { "label": "How to self host", "url": "/" },

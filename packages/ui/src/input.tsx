@@ -38,6 +38,12 @@ export const Input = ({
 }: InputProps) => {
   const customClassName = `${getCommonStyles} ${getInputSizeStyles(size)} ${getVariantBackgroundStyles(variant)} ${getVariantOutlineStyles(variant)} ${getVariantBorderStyles(variant)} ${getVariantInputTextStyles(variant)} ${className}`
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (setValue) {
+      setValue(e.target.value)
+    }
+  }
+
   return (
     <input
       type={type}
@@ -45,6 +51,7 @@ export const Input = ({
       className={customClassName}
       defaultValue={defaultValue}
       value={value}
+      onChange={handleChange}
       name={name}
       id={id}
     />
