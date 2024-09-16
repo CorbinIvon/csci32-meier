@@ -15,8 +15,8 @@ const Csci32AssignmentWeek4 = () => {
     <PageLayout>
       <h2 className="text-2xl font-semibold">Week 4 - Input Component and Random Number Guesser</h2>
       <p>
-        This week I've created an input component that can be used to take user input. Below are the examples of the
-        input component.
+        This week I&apos;ve created an input component that can be used to take user input. Below are the examples of
+        the input component.
       </p>
       <section>
         <br />
