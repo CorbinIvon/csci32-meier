@@ -1,11 +1,17 @@
-// csci32-meier/src/components/client/PageLayout.tsx
 'use client' // Mark this as a Client Component
 
-import React, { useState, useEffect, ReactNode } from 'react'
-import CollapsibleMenu from '@/components/client/navigation/CollapsibleMenu'
+import React, { useState, useEffect, useRef, ReactNode } from 'react'
 import Avatar from '@/components/client/data_display/Avatar'
+import BreadcrumbMenu from '@/components/client/navigation/BreadcrumbMenu' // Import the BreadcrumbMenu
 // Import the JSON data
 import resourceCatalogue from '@/app/data/resource-catalogue.json'
+
+// Define the Item interface
+interface Item {
+  title: string
+  url?: string
+  items?: Item[]
+}
 
 interface PageLayoutProps {
   children: ReactNode
@@ -13,6 +19,10 @@ interface PageLayoutProps {
 
 const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
   const [baseUrl, setBaseUrl] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState('') // Search term state
+  const [breadcrumb, setBreadcrumb] = useState<Item[]>([]) // Keep track of breadcrumb in the parent
+  const [inSearchMode, setInSearchMode] = useState(false) // Track if we're in search mode
+  const searchInputRef = useRef<HTMLInputElement>(null) // Ref for the search input
 
   // Set base URL on client side
   useEffect(() => {
@@ -21,19 +31,33 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
     }
   }, [])
 
-  // Update internal links with the correct base URL (if necessary)
-  const navigationData = resourceCatalogue.catalogue.map((item) => {
-    if (item.title === 'Internal Links' && baseUrl) {
-      return {
-        ...item,
-        items: item.items.map((link) => ({
-          ...link,
-          url: baseUrl + link.url,
-        })),
+  // Add Ctrl + K keyboard shortcut to focus search bar
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === 'k') {
+        e.preventDefault() // Prevent default browser search
+        searchInputRef.current?.focus() // Focus on the search input
       }
     }
-    return item
-  })
+
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
+
+  // Handle the search functionality
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value) // Persist the search term in the state
+  }
+
+  // Log or handle the breadcrumb navigation changes
+  const handleNavigate = (breadcrumb: Item[], inSearchMode: boolean) => {
+    setBreadcrumb(breadcrumb)
+    setInSearchMode(inSearchMode)
+    console.log('Breadcrumb:', breadcrumb, 'Search Mode:', inSearchMode) // Debugging purposes
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -85,19 +109,29 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
         <div className="w-64 p-4 border-r border-gray-300">
           <div className="mb-4">
             <div className="relative">
+              <span
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                onClick={() => searchInputRef.current?.focus()}
+              >
+                Ctrl + K
+              </span>
               <input
                 type="text"
                 placeholder="Search..."
+                ref={searchInputRef} // Attach ref to the search input
+                value={searchTerm} // Controlled input for search term
+                onChange={handleSearch} // Handle search input change
                 className="w-full p-2 pr-16 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">Ctrl + K</span>
             </div>
           </div>
 
-          {/* Collapsible Menu in Aside */}
-          <aside className="overflow-y-auto max-h-[calc(100vh-70px-60px)]">
-            {baseUrl && <CollapsibleMenu data={navigationData} />}
-          </aside>
+          {/* Breadcrumb Menu */}
+          <BreadcrumbMenu
+            data={resourceCatalogue.catalogue}
+            searchTerm={searchTerm} // Pass down the search term to filter items
+            onNavigate={handleNavigate} // Update breadcrumb and search mode in parent
+          />
         </div>
 
         {/* Main content on the right */}

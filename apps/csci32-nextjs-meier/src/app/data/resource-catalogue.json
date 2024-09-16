@@ -3,43 +3,43 @@
     {
       "title": "CSCI-32 Assignments by week",
       "items": [
-        { "label": "Week 1", "url": "/pages/CSCI32Assignments/week1" },
-        { "label": "Week 2", "url": "/pages/CSCI32Assignments/week2" },
-        { "label": "Week 3", "url": "/pages/CSCI32Assignments/week3" },
-        { "label": "Week 4", "url": "/pages/CSCI32Assignments/week4" }
+        { "title": "Week 1", "url": "/pages/CSCI32Assignments/week1" },
+        { "title": "Week 2", "url": "/pages/CSCI32Assignments/week2" },
+        { "title": "Week 3", "url": "/pages/CSCI32Assignments/week3" },
+        { "title": "Week 4", "url": "/pages/CSCI32Assignments/week4" }
       ]
     },
     {
       "title": "Self-Hosting",
       "items": [
-        { "label": "How to self host", "url": "/" },
+        { "title": "How to self host", "url": "/" },
         {
           "title": "Tools",
           "items": [
-            { "label": "Docker", "url": "/" },
+            { "title": "Docker", "url": "/" },
             {
               "title": "Research ToDo",
               "items": [
-                { "label": "Portainer", "url": "/" },
-                { "label": "Traefik", "url": "/" },
-                { "label": "Watchtower", "url": "/" },
-                { "label": "Wordpress", "url": "/" }
+                { "title": "Portainer", "url": "/" },
+                { "title": "Traefik", "url": "/" },
+                { "title": "Watchtower", "url": "/" },
+                { "title": "Wordpress", "url": "/" }
               ]
             },
             {
               "title": "My Favorites",
               "items": [
-                { "label": "Gitea", "url": "https://about.gitea.com/" },
-                { "label": "Jellyfin", "url": "https://jellyfin.org/" },
-                { "label": "Calibre-Web", "url": "https://github.com/janeczku/calibre-web" },
-                { "label": "Nextcloud", "url": "https://nextcloud.com/" },
-                { "label": "mariadb", "url": "https://mariadb.org/" },
-                { "label": "Crafty Controler", "url": "https://craftycontrol.com/" },
-                { "label": "BookStack", "url": "https://www.bookstackapp.com/" },
-                { "label": "pihole", "url": "https://pi-hole.net/" }
+                { "title": "Gitea", "url": "https://about.gitea.com/" },
+                { "title": "Jellyfin", "url": "https://jellyfin.org/" },
+                { "title": "Calibre-Web", "url": "https://github.com/janeczku/calibre-web" },
+                { "title": "Nextcloud", "url": "https://nextcloud.com/" },
+                { "title": "mariadb", "url": "https://mariadb.org/" },
+                { "title": "Crafty Controler", "url": "https://craftycontrol.com/" },
+                { "title": "BookStack", "url": "https://www.bookstackapp.com/" },
+                { "title": "pihole", "url": "https://pi-hole.net/" }
               ]
             },
-            { "label": "PHP", "url": "/" }
+            { "title": "PHP", "url": "/" }
           ]
         }
       ]
@@ -53,8 +53,8 @@
             {
               "title": "Core Mechanics",
               "items": [
-                { "label": "Unique Crafting Systems", "url": "/" },
-                { "label": "Electrical System", "url": "/" }
+                { "title": "Unique Crafting Systems", "url": "/" },
+                { "title": "Electrical System", "url": "/" }
               ]
             }
           ]
@@ -69,16 +69,16 @@
           "items": [
             {
               "title": "Components Libraries",
-              "items": [{ "label": "daisyui", "url": "https://daisyui.com/docs/install/" }]
+              "items": [{ "title": "daisyui", "url": "https://daisyui.com/docs/install/" }]
             },
-            { "label": "My Components", "url": "/pages/programming/NextJS/MyComponents" }
+            { "title": "My Components", "url": "/pages/programming/NextJS/MyComponents" }
           ]
         }
       ]
     },
     {
       "title": "Learning",
-      "items": []
+      "url": "/"
     }
   ]
 }
