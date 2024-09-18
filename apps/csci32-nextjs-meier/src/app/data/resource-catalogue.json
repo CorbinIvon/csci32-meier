@@ -69,7 +69,10 @@
           "items": [
             {
               "title": "Components Libraries",
-              "items": [{ "title": "daisyui", "url": "https://daisyui.com/docs/install/" }]
+              "items": [
+                { "title": "daisyui", "url": "https://daisyui.com/docs/install/" },
+                { "title": "HeadlessUI", "url": "https://headlessui.com/" }
+              ]
             },
             { "title": "My Components", "url": "/pages/programming/NextJS/MyComponents" }
           ]
