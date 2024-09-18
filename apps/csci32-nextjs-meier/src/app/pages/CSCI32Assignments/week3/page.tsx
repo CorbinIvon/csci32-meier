@@ -3,7 +3,7 @@ import PageLayout from '@/components/client/PageLayout'
 import { Button } from '@repo/ui/src/button'
 import { Size } from '@repo/ui/src/size'
 import { Variant } from '@repo/ui/src/variant'
-import GoogleSignInButton from '@repo/sso/src/GoogleSignInButton'
+import GoogleSignInButton from '@sso/GoogleSignInButton'
 
 const csci32_assignment_week_3 = () => {
   return (
