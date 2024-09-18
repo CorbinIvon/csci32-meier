@@ -7,11 +7,11 @@ export enum Variant {
 export function getVariantBackgroundStyles(variant: Variant) {
   switch (variant) {
     case Variant.PRIMARY:
-      return 'bg-blue-200'
+      return 'bg-blue-200 hover:bg-blue-300 active:bg-blue-400'
     case Variant.SECONDARY:
-      return 'bg-gray-200'
+      return 'bg-gray-200 hover:bg-gray-300 active:bg-gray-400'
     case Variant.TERTIARY:
-      return 'bg-gray-50'
+      return 'bg-gray-50 hover:bg-gray-200 active:bg-gray-300'
   }
 }
 
