@@ -14,7 +14,7 @@ interface Item {
 }
 
 interface PageLayoutProps {
-  children: ReactNode
+  children?: ReactNode
 }
 
 const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
