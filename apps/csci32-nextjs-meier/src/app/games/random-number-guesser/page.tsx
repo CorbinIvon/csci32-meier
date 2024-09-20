@@ -6,6 +6,7 @@ import { Button } from '@repo/ui/src/button'
 import { Size } from '@repo/ui/src/size'
 import { Variant } from '@repo/ui/src/variant'
 import getRandomint from '@math/getRandomInt'
+import gifs from './gifs'
 
 export default function RandomNumberGuesserGame() {
   // States for game configuration and gameplay
@@ -109,6 +110,7 @@ export default function RandomNumberGuesserGame() {
     const blue = Math.round(255 * relativeDistance)
     return `rgb(${red}, 0, ${blue})`
   }
+
   function getGameWindowStyle() {
     const baseWindowStyle = `${transitionClasses} p-8 rounded shadow-xl`
     switch (currentScreen) {
@@ -246,11 +248,23 @@ export default function RandomNumberGuesserGame() {
           {currentScreen === 'result' && (
             <section className="result-screen">
               {gameResult === 'win' ? (
-                <p>🎉 You Win! Congratulations! 🎉</p>
+                <>
+                  <p>🎉 You Win! Congratulations! 🎉</p>
+                  <iframe
+                    src={`https://giphy.com/embed/${gifs.win[getRandomint({ min: 0, max: gifs.win.length - 1 })]}`}
+                    allowFullScreen
+                    className="p-4"
+                  />
+                </>
               ) : (
                 <>
                   <p>😢 Game Over! Better luck next time! 😢</p>
                   <p>The correct number was: {targetNumber}</p>
+                  <iframe
+                    src={`https://giphy.com/embed/${gifs.lose[getRandomint({ min: 0, max: gifs.lose.length - 1 })]}`}
+                    allowFullScreen
+                    className="p-4"
+                  />
                 </>
               )}
               <Button size={Size.MEDIUM} variant={Variant.PRIMARY} onClick={() => changeScreenWithTransition('config')}>
