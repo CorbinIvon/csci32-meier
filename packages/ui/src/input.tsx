@@ -11,22 +11,22 @@ import {
 } from './variant'
 import { getCommonStyles } from './tokens'
 
-interface InputProps {
+interface InputProps<T> {
   placeholder?: string
   className?: string
   size?: Size
   variant?: Variant
   type?: HTMLInputTypeAttribute
   defaultValue?: any
-  value?: any
-  setValue?: (newValue: string | boolean) => void
+  value?: T | number
+  setValue?: (newValue: T) => void
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
   name?: string
   id?: string
   disabled?: boolean
 }
 
-export const Input = ({
+export const Input = <T extends string | boolean>({
   placeholder,
   className = '',
   size = Size.MEDIUM,
@@ -39,7 +39,7 @@ export const Input = ({
   name,
   id,
   disabled = false,
-}: InputProps) => {
+}: InputProps<T>) => {
   const checkboxStyles =
     type === 'checkbox' ? ' w-4 h-4 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 align-middle' : ''
   const customClassName = `${getCommonStyles} ${getInputSizeStyles(size)} ${getVariantBackgroundStyles(variant)} ${getVariantOutlineStyles(variant)} ${getVariantBorderStyles(variant)} ${getVariantInputTextStyles(variant)}${checkboxStyles} ${className}`
@@ -47,11 +47,11 @@ export const Input = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (type === 'checkbox') {
       if (setValue) {
-        setValue(e.target.checked)
+        setValue(e.target.checked as T)
       }
     } else {
       if (setValue) {
-        setValue(e.target.value)
+        setValue(e.target.value as T)
       }
     }
 
@@ -66,8 +66,8 @@ export const Input = ({
       placeholder={placeholder}
       className={customClassName}
       defaultValue={defaultValue}
-      value={type === 'checkbox' ? undefined : value}
-      checked={type === 'checkbox' ? !!value : undefined}
+      value={type === 'checkbox' ? undefined : (value as string)}
+      checked={type === 'checkbox' ? (value as boolean) : undefined}
       onChange={handleChange}
       name={name}
       id={id}
