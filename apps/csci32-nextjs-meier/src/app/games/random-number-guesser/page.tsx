@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import PageLayout from '@/components/client/PageLayout'
 import { Input } from '@repo/ui/src/input'
 import { Button } from '@repo/ui/src/button'
@@ -10,6 +10,7 @@ import getRandomint from '@math/getRandomInt'
 export default function RandomNumberGuesserGame() {
   // States for game configuration and gameplay
   const [currentScreen, setCurrentScreen] = useState('welcome')
+  const [transitioning, setTransitioning] = useState(false)
   const [minNumber, setMinNumber] = useState(1)
   const [maxNumber, setMaxNumber] = useState(100)
   const [maxTries, setMaxTries] = useState(5)
@@ -25,6 +26,15 @@ export default function RandomNumberGuesserGame() {
   const [lowestGuess, setLowestGuess] = useState<number>(minNumber)
   const [highestGuess, setHighestGuess] = useState<number>(maxNumber)
 
+  // Transition Helper: Handle smooth transitions between screens
+  const changeScreenWithTransition = (newScreen: string) => {
+    setTransitioning(true)
+    setTimeout(() => {
+      setCurrentScreen(newScreen)
+      setTransitioning(false)
+    }, 350)
+  }
+
   // Function to start the game by setting the random number and switching screens
   const startGame = () => {
     setTargetNumber(getRandomint({ min: minNumber, max: maxNumber }))
@@ -35,7 +45,7 @@ export default function RandomNumberGuesserGame() {
     setPreviousGuesses([])
     setLowestGuess(minNumber)
     setHighestGuess(maxNumber)
-    setCurrentScreen('game')
+    changeScreenWithTransition('game')
   }
 
   // Function to handle guess logic
@@ -50,7 +60,7 @@ export default function RandomNumberGuesserGame() {
     if (guessesLeft <= 0) {
       setMessage('No more guesses left! Game over!')
       setGameResult('loss')
-      setCurrentScreen('result')
+      changeScreenWithTransition('result')
       return
     }
 
@@ -61,7 +71,7 @@ export default function RandomNumberGuesserGame() {
     if (guessNumber === targetNumber) {
       setMessage('Congratulations! You guessed correctly!')
       setGameResult('win')
-      setCurrentScreen('result')
+      changeScreenWithTransition('result')
     } else if (guessNumber < targetNumber!) {
       result = 'too low'
       recommendation = Math.floor((guessNumber + highestGuess) / 2) // Recommend between the guess and highest guess
@@ -79,9 +89,14 @@ export default function RandomNumberGuesserGame() {
 
     if (guessesLeft - 1 <= 0) {
       setGameResult('loss')
-      setCurrentScreen('result')
+      changeScreenWithTransition('result')
     }
   }
+
+  // Class for handling the shrinking and expanding effect
+  const transitionClasses = transitioning
+    ? 'transform scale-0 transition-all duration-500'
+    : 'transform scale-100 transition-all duration-500'
 
   // Function to calculate color for Hot and Cold indicator
   const getColorForGuess = (guess: number) => {
@@ -95,7 +110,7 @@ export default function RandomNumberGuesserGame() {
     return `rgb(${red}, 0, ${blue})`
   }
   function getGameWindowStyle() {
-    const baseWindowStyle = `p-8 rounded shadow-xl`
+    const baseWindowStyle = `${transitionClasses} p-8 rounded shadow-xl`
     switch (currentScreen) {
       case 'welcome':
       case 'config':
@@ -121,7 +136,7 @@ export default function RandomNumberGuesserGame() {
           {currentScreen === 'welcome' && (
             <section className="welcome-screen">
               <p>Welcome to the Random Number Guesser Game!</p>
-              <Button size={Size.MEDIUM} variant={Variant.PRIMARY} onClick={() => setCurrentScreen('config')}>
+              <Button size={Size.MEDIUM} variant={Variant.PRIMARY} onClick={() => changeScreenWithTransition('config')}>
                 Start Game
               </Button>
             </section>
@@ -222,7 +237,7 @@ export default function RandomNumberGuesserGame() {
               )}
 
               {/* Button to start a new game */}
-              <Button size={Size.MEDIUM} variant={Variant.PRIMARY} onClick={() => setCurrentScreen('config')}>
+              <Button size={Size.MEDIUM} variant={Variant.PRIMARY} onClick={() => changeScreenWithTransition('config')}>
                 New Game
               </Button>
             </section>
@@ -238,7 +253,7 @@ export default function RandomNumberGuesserGame() {
                   <p>The correct number was: {targetNumber}</p>
                 </>
               )}
-              <Button size={Size.MEDIUM} variant={Variant.PRIMARY} onClick={() => setCurrentScreen('config')}>
+              <Button size={Size.MEDIUM} variant={Variant.PRIMARY} onClick={() => changeScreenWithTransition('config')}>
                 Play Again
               </Button>
             </section>
