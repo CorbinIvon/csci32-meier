@@ -94,11 +94,28 @@ export default function RandomNumberGuesserGame() {
     const blue = Math.round(255 * relativeDistance)
     return `rgb(${red}, 0, ${blue})`
   }
-  const gameWindow = `min-h-screen flex justify-center items-center bg-gray-200`
+  function getGameWindowStyle() {
+    const baseWindowStyle = `p-8 rounded shadow-xl`
+    switch (currentScreen) {
+      case 'welcome':
+      case 'config':
+        return `${baseWindowStyle} bg-white `
+      case 'game':
+        return guessesLeft > 1 ? `${baseWindowStyle} bg-white` : `${baseWindowStyle} bg-red-50`
+      case 'result':
+        return gameResult === 'win' ? `${baseWindowStyle} bg-green-600` : `${baseWindowStyle} bg-red-400`
+    }
+    return `${baseWindowStyle} `
+  }
+
+  const gameWindow = getGameWindowStyle()
   return (
     <PageLayout className="w-full">
-      <div className={gameWindow} style={{ minHeight: `calc(100vh - 130px)` }}>
-        <div className="bg-white p-8 rounded shadow-lg">
+      <div
+        className="min-h-screen flex justify-center items-center bg-gray-200"
+        style={{ minHeight: `calc(100vh - 130px)` }}
+      >
+        <div className={gameWindow}>
           <h2 className="text-2xl font-semibold">Random Number Guesser</h2>
           {/* Render welcome, config, game, or result screen based on currentScreen */}
           {currentScreen === 'welcome' && (
@@ -168,7 +185,7 @@ export default function RandomNumberGuesserGame() {
           {currentScreen === 'game' && (
             <section className="game-window">
               <p>{message}</p>
-              <p>Guesses Left: {guessesLeft}</p>
+              {guessesLeft > 1 ? <p>Guesses Left: {guessesLeft}</p> : <p>FINAL GUESS (Make it count)</p>}
 
               {/* Form for input and submit */}
               <form onSubmit={handleGuess}>
