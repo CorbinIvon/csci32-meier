@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@repo/math": "*",
     "@repo/sso": "*",
     "@repo/ui": "*",
     "@vercel/analytics": "^1.3.1",

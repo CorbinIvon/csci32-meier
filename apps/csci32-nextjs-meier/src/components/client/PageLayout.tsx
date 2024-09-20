@@ -11,13 +11,15 @@ interface Item {
   title: string
   url?: string
   items?: Item[]
+  className?: string
 }
 
 interface PageLayoutProps {
-  children: ReactNode
+  children?: ReactNode
+  className?: string
 }
 
-const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
+const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
   const [baseUrl, setBaseUrl] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('') // Search term state
   const [breadcrumb, setBreadcrumb] = useState<Item[]>([]) // Keep track of breadcrumb in the parent
@@ -135,7 +137,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
         </div>
 
         {/* Main content on the right */}
-        <main className="flex-1 p-6">{children}</main>
+        <main className={className}>{children}</main>
       </div>
 
       {/* Footer Section */}

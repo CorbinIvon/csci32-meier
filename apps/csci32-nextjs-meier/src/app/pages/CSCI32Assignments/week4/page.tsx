@@ -89,14 +89,13 @@ const Csci32AssignmentWeek4 = () => {
         <hr />
         <br />
         <h3 className="text-xl font-semibold">Random Number Guesser</h3>
-        <p>UNDER CONSTRUCTION</p>
-        <iframe
-          src="https://giphy.com/embed/6qdKZFhT0VBm0"
-          width="480"
-          height="360"
-          className="rounded-lg shadow-md"
-          allowFullScreen
-        ></iframe>
+        <Button
+          size={Size.MEDIUM}
+          variant={Variant.PRIMARY}
+          onClick={() => (location.href = '/games/random-number-guesser')}
+        >
+          Go to Game
+        </Button>
       </section>
     </PageLayout>
   )
