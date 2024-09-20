@@ -20,8 +20,9 @@ interface InputProps {
   defaultValue?: any
   value?: any
   setValue?: (newValue: string) => void
-  name: string
-  id: string
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  name?: string
+  id?: string
 }
 
 export const Input = ({
@@ -33,6 +34,7 @@ export const Input = ({
   defaultValue,
   value,
   setValue,
+  onChange,
   name,
   id,
 }: InputProps) => {
@@ -41,6 +43,9 @@ export const Input = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (setValue) {
       setValue(e.target.value)
+    }
+    if (onChange) {
+      onChange(e)
     }
   }
 
