@@ -15,12 +15,15 @@ export default function RandomNumberGuesserGame() {
   const [maxTries, setMaxTries] = useState(5)
   const [targetNumber, setTargetNumber] = useState<number | null>(null)
   const [userGuess, setUserGuess] = useState<number | ''>('')
-  const [message, setMessage] = useState<string>('')
+  const [message, setMessage] = useState<string>('Start guessing...')
   const [guessesLeft, setGuessesLeft] = useState(maxTries)
   const [gameResult, setGameResult] = useState<string | null>(null)
   const [previousGuesses, setPreviousGuesses] = useState<{ guess: number; result: string }[]>([])
   const [showPreviousGuesses, setShowPreviousGuesses] = useState<boolean>(false)
   const [hotAndCold, setHotAndCold] = useState<boolean>(false)
+  const [showGuessSuggestions, setShowGuessSuggestions] = useState<boolean>(true)
+  const [lowestGuess, setLowestGuess] = useState<number>(minNumber)
+  const [highestGuess, setHighestGuess] = useState<number>(maxNumber)
 
   // Function to start the game by setting the random number and switching screens
   const startGame = () => {
@@ -30,6 +33,8 @@ export default function RandomNumberGuesserGame() {
     setMessage('Start guessing...')
     setGameResult(null)
     setPreviousGuesses([])
+    setLowestGuess(minNumber)
+    setHighestGuess(maxNumber)
     setCurrentScreen('game')
   }
 
@@ -49,18 +54,28 @@ export default function RandomNumberGuesserGame() {
       return
     }
 
-    const result = userGuess === targetNumber ? 'correct' : userGuess < targetNumber! ? 'too low' : 'too high'
+    const guessNumber = Number(userGuess)
+    let result: string = ''
+    let recommendation: number = 0
 
-    setPreviousGuesses([...previousGuesses, { guess: userGuess, result }])
-
-    if (userGuess === targetNumber) {
+    if (guessNumber === targetNumber) {
       setMessage('Congratulations! You guessed correctly!')
       setGameResult('win')
       setCurrentScreen('result')
+    } else if (guessNumber < targetNumber!) {
+      result = 'too low'
+      recommendation = Math.floor((guessNumber + highestGuess) / 2) // Recommend between the guess and highest guess
+      setMessage(`Too low!` + (showGuessSuggestions ? ` Try guessing ${recommendation}.` : ''))
+      setLowestGuess(Math.max(lowestGuess, guessNumber))
     } else {
-      setMessage(result === 'too low' ? 'Too low! Try again.' : 'Too high! Try again.')
-      setGuessesLeft(guessesLeft - 1)
+      result = 'too high'
+      recommendation = Math.floor((guessNumber + lowestGuess) / 2) // Recommend between the guess and lowest guess
+      setMessage(`Too high!` + (showGuessSuggestions ? ` Try guessing ${recommendation}.` : ''))
+      setHighestGuess(Math.min(highestGuess, guessNumber))
     }
+
+    setPreviousGuesses([...previousGuesses, { guess: guessNumber, result }])
+    setGuessesLeft(guessesLeft - 1)
 
     if (guessesLeft - 1 <= 0) {
       setGameResult('loss')
@@ -111,6 +126,15 @@ export default function RandomNumberGuesserGame() {
           </div>
           <br />
           <h3 className="mb-2 text-2xl font-extrabold leading-none tracking-tight text-gray-600">More Settings!</h3>
+          <div>
+            <Input
+              type="checkbox"
+              value={showGuessSuggestions}
+              onChange={(e) => setShowGuessSuggestions(e.target.checked)}
+              className="mr-2"
+            />
+            <label>Show Guess Suggestions</label>
+          </div>
           <div>
             <Input
               type="checkbox"
