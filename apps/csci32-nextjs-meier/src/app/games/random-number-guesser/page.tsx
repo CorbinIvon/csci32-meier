@@ -69,6 +69,11 @@ export default function RandomNumberGuesserGame() {
     let result: string = ''
     let recommendation: number = 0
 
+    if (guessesLeft - 1 <= 0) {
+      setGameResult('loss')
+      changeScreenWithTransition('result')
+    }
+
     if (guessNumber === targetNumber) {
       setMessage('Congratulations! You guessed correctly!')
       setGameResult('win')
@@ -87,11 +92,6 @@ export default function RandomNumberGuesserGame() {
 
     setPreviousGuesses([...previousGuesses, { guess: guessNumber, result }])
     setGuessesLeft(guessesLeft - 1)
-
-    if (guessesLeft - 1 <= 0) {
-      setGameResult('loss')
-      changeScreenWithTransition('result')
-    }
   }
 
   // Class for handling the shrinking and expanding effect
