@@ -18,6 +18,9 @@ export default function RandomNumberGuesserGame() {
   const [message, setMessage] = useState<string>('')
   const [guessesLeft, setGuessesLeft] = useState(maxTries)
   const [gameResult, setGameResult] = useState<string | null>(null)
+  const [previousGuesses, setPreviousGuesses] = useState<{ guess: number; result: string }[]>([])
+  const [showPreviousGuesses, setShowPreviousGuesses] = useState<boolean>(false)
+  const [hotAndCold, setHotAndCold] = useState<boolean>(false)
 
   // Function to start the game by setting the random number and switching screens
   const startGame = () => {
@@ -26,6 +29,7 @@ export default function RandomNumberGuesserGame() {
     setUserGuess('')
     setMessage('Start guessing...')
     setGameResult(null)
+    setPreviousGuesses([])
     setCurrentScreen('game')
   }
 
@@ -45,15 +49,16 @@ export default function RandomNumberGuesserGame() {
       return
     }
 
+    const result = userGuess === targetNumber ? 'correct' : userGuess < targetNumber! ? 'too low' : 'too high'
+
+    setPreviousGuesses([...previousGuesses, { guess: userGuess, result }])
+
     if (userGuess === targetNumber) {
       setMessage('Congratulations! You guessed correctly!')
       setGameResult('win')
       setCurrentScreen('result')
-    } else if (userGuess < targetNumber!) {
-      setMessage('Too low! Try again.')
-      setGuessesLeft(guessesLeft - 1)
     } else {
-      setMessage('Too high! Try again.')
+      setMessage(result === 'too low' ? 'Too low! Try again.' : 'Too high! Try again.')
       setGuessesLeft(guessesLeft - 1)
     }
 
@@ -61,6 +66,18 @@ export default function RandomNumberGuesserGame() {
       setGameResult('loss')
       setCurrentScreen('result')
     }
+  }
+
+  // Function to calculate color for Hot and Cold indicator
+  const getColorForGuess = (guess: number) => {
+    if (!targetNumber) return '#fff'
+    const distance = Math.abs(guess - targetNumber)
+    const maxDistance = maxNumber - minNumber
+    const relativeDistance = distance / maxDistance
+    // Interpolate between blue (far) and red (close)
+    const red = Math.round(255 * (1 - relativeDistance))
+    const blue = Math.round(255 * relativeDistance)
+    return `rgb(${red}, 0, ${blue})`
   }
 
   return (
@@ -92,6 +109,28 @@ export default function RandomNumberGuesserGame() {
             <label>Max Tries:</label>
             <Input type="number" value={maxTries} onChange={(e) => setMaxTries(Number(e.target.value))} />
           </div>
+          <br />
+          <h3 className="mb-2 text-2xl font-extrabold leading-none tracking-tight text-gray-600">More Settings!</h3>
+          <div>
+            <Input
+              type="checkbox"
+              value={showPreviousGuesses}
+              onChange={(e) => setShowPreviousGuesses(e.target.checked)}
+              className="mr-2"
+            />
+            <label>Show Previous Guesses</label>
+          </div>
+          <div>
+            <Input
+              type="checkbox"
+              value={hotAndCold}
+              onChange={(e) => setHotAndCold(e.target.checked)}
+              className="mr-2 ml-6"
+              disabled={!showPreviousGuesses}
+            />
+            <label>Enable Hot and Cold indicators</label>
+          </div>
+          <br />
           <Button size={Size.MEDIUM} variant={Variant.PRIMARY} onClick={startGame}>
             Start Game
           </Button>
@@ -118,6 +157,25 @@ export default function RandomNumberGuesserGame() {
             </Button>
           </form>
 
+          {/* Show previous guesses if the option is enabled */}
+          {showPreviousGuesses && previousGuesses.length > 0 && (
+            <section className="previous-guesses">
+              <h3>Previous Guesses</h3>
+              <ul>
+                {previousGuesses.map(({ guess, result }, index) => (
+                  <li
+                    key={index}
+                    style={{
+                      backgroundColor: hotAndCold ? getColorForGuess(guess) : 'transparent',
+                    }}
+                  >
+                    {guess} was {result}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
           {/* Button to start a new game */}
           <Button size={Size.MEDIUM} variant={Variant.PRIMARY} onClick={() => setCurrentScreen('config')}>
             New Game
@@ -130,7 +188,10 @@ export default function RandomNumberGuesserGame() {
           {gameResult === 'win' ? (
             <p>🎉 You Win! Congratulations! 🎉</p>
           ) : (
-            <p>😢 Game Over! Better luck next time! 😢</p>
+            <>
+              <p>😢 Game Over! Better luck next time! 😢</p>
+              <p>The correct number was: {targetNumber}</p>
+            </>
           )}
           <Button size={Size.MEDIUM} variant={Variant.PRIMARY} onClick={() => setCurrentScreen('config')}>
             Play Again
