@@ -1,15 +1,25 @@
 {
   "name": "my-turborepo",
   "private": true,
+  "prisma": {
+    "schema": "packages/recipestacker-db/prisma/schema.prisma",
+    "seed": "packages/recipestacker-db/src/seed.ts"
+  },
   "scripts": {
     "build": "turbo build",
+    "db.migrate:deploy": "turbo run db.migrate:deploy",
+    "db:push": "turbo run db:push",
+    "db:seed": "turbo run db:seed",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "generate": "turbo run generate"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
     "turbo": "^2.1.1",
+    "prisma": "5.20.0",
+    "tsx": "^4.7.1",
     "typescript": "^5.4.5"
   },
   "engines": {
@@ -19,5 +29,8 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@prisma/client": "5.10.2"
+  }
 }
