@@ -1,10 +1,10 @@
 'use client'
 import React, { useState } from 'react'
 import PageLayout from '@/components/client/PageLayout'
-import { Input } from '@repo/ui/src/input'
-import { Button } from '@repo/ui/src/button'
-import { Size } from '@repo/ui/src/size'
-import { Variant } from '@repo/ui/src/variant'
+import { Input } from '@package/ui/src/input'
+import { Button } from '@package/ui/src/button'
+import { Size } from '@package/ui/src/size'
+import { Variant } from '@package/ui/src/variant'
 
 const Csci32AssignmentWeek4 = () => {
   const [inputValueName, setInputValueName] = useState('')
