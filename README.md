@@ -10,11 +10,21 @@ npm run dev
 
 Run the following from the root of the project:
 
+# Useful Notes and Commands (In order)
+
+## Database
+
+Starting the database: `docker-compose up -d`
+
+- Not starting? Make sure docker desktop is running.
+
+`npx prisma migrate dev` on database update.
+
+## Turbo
+
 ```node
 turbo run build
 ```
-
-This will build all the packages in the project.
 
 # Turborepo starter
 

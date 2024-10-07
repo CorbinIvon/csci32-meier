@@ -2,8 +2,8 @@
   "name": "my-turborepo",
   "private": true,
   "prisma": {
-    "schema": "packages/recipestacker-db/prisma/schema.prisma",
-    "seed": "packages/recipestacker-db/src/seed.ts"
+    "schema": "packages/recipestacker-database/prisma/schema.prisma",
+    "seed": "packages/recipestacker-database/src/seed.ts"
   },
   "scripts": {
     "build": "turbo build",

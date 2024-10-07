@@ -1,5 +1,5 @@
 {
-  "name": "@package/recipestacker-db",
+  "name": "@package/recipestacker-database",
   "version": "1.0.0",
   "exports": {
     ".": "./src/client.ts"

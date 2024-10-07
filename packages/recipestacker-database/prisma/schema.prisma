@@ -27,7 +27,7 @@ model Recipe {
   image         String?
   User User[]
 
-  Quantity Quantity[]
+  ingredient_measurements IngredientMeasurement[]
 }
 
 model Ingredient {
@@ -36,19 +36,16 @@ model Ingredient {
   recipes       Recipe[]
   image         String?
 
-  Quantity Quantity[]
+  ingredient_measurements IngredientMeasurement[]
 }
 
-model Quantity {
-  quantity_id   String    @id @default(cuid())
-  amount        Float
-  unit          String
-  ingredient    Ingredient @relation(fields: [ingredient_id], references: [ingredient_id], map: "Ingredient_Quantity_fkey")
-  recipe        Recipe @relation(fields: [recipe_id], references: [recipe_id], map: "Recipe_Quantity_fkey")
-
+model IngredientMeasurement {
+  @@id([ingredient_id, recipe_id])
   ingredient_id String
   recipe_id     String
+  amount        Float
+  unit          String
+  ingredient    Ingredient @relation(fields: [ingredient_id], references: [ingredient_id], map: "Ingredient_IngredientMeasurement_fkey")
+  recipe        Recipe @relation(fields: [recipe_id], references: [recipe_id], map: "Recipe_IngredientMeasurement_fkey")
 
-  @@index([ingredient_id])
-  @@index([recipe_id])
 }
