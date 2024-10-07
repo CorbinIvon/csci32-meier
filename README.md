@@ -20,6 +20,8 @@ Starting the database: `docker-compose up -d`
 
 `npx prisma migrate dev` on database update.
 
+`npx prisma studio` to view the database.
+
 ## Turbo
 
 ```node
