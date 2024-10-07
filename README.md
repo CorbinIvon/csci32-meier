@@ -10,11 +10,21 @@ npm run dev
 
 Run the following from the root of the project:
 
+# Useful Notes and Commands (In order)
+
+## Database
+
+Starting the database: `docker-compose up -d`
+
+- Not starting? Make sure docker desktop is running.
+
+`npx prisma migrate dev` on database update.
+
+## Turbo
+
 ```node
 turbo run build
 ```
-
-This will build all the packages in the project.
 
 # Turborepo starter
 
@@ -36,9 +46,9 @@ This Turborepo includes the following packages/apps:
 
 - `docs`: a [Next.js](https://nextjs.org/) app
 - `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- `@package/ui`: a stub React component library shared by both `web` and `docs` applications
+- `@package/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- `@package/typescript-config`: `tsconfig.json`s used throughout the monorepo
 
 Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 

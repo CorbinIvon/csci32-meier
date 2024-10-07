@@ -1,5 +1,5 @@
 {
-  "name": "@repo/math",
+  "name": "@package/math",
   "version": "1.0.0",
   "private": true,
   "main": "dist/index.js",
@@ -15,8 +15,8 @@
     "generate:component": "turbo gen react-component"
   },
   "devDependencies": {
-    "@repo/eslint-config": "*",
-    "@repo/typescript-config": "*",
+    "@package/eslint-config": "*",
+    "@package/typescript-config": "*",
     "@turbo/gen": "^1.12.4",
     "@types/eslint": "^8.56.5",
     "@types/node": "^20.11.24",
@@ -24,10 +24,5 @@
     "@types/react-dom": "^18.2.19",
     "eslint": "^8.57.0",
     "typescript": "^5.3.3"
-  },
-  "dependencies": {
-    "firebase": "^10.13.1",
-    "next-auth": "^4.24.7",
-    "react": "^18.2.0"
   }
 }

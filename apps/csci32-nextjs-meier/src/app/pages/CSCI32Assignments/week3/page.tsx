@@ -1,8 +1,8 @@
 import React from 'react'
 import PageLayout from '@/components/client/PageLayout'
-import { Button } from '@repo/ui/src/button'
-import { Size } from '@repo/ui/src/size'
-import { Variant } from '@repo/ui/src/variant'
+import { Button } from '@package/ui/src/button'
+import { Size } from '@package/ui/src/size'
+import { Variant } from '@package/ui/src/variant'
 import GoogleSignInButton from '@sso/GoogleSignInButton'
 
 const csci32_assignment_week_3 = () => {
