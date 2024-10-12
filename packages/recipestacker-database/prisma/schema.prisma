@@ -20,7 +20,7 @@ model User {
 
 model Recipe {
   recipe_id     String    @id @default(cuid())
-  title         String
+  name          String
   description   String?
   ingredients   Ingredient[]
   directions    String
@@ -33,6 +33,7 @@ model Recipe {
 model Ingredient {
   ingredient_id String    @id @default(cuid())
   name          String
+  description   String?
   recipes       Recipe[]
   image         String?
 
@@ -43,9 +44,8 @@ model IngredientMeasurement {
   @@id([ingredient_id, recipe_id])
   ingredient_id String
   recipe_id     String
-  amount        Float
   unit          String
+  quantity      Int
   ingredient    Ingredient @relation(fields: [ingredient_id], references: [ingredient_id], map: "Ingredient_IngredientMeasurement_fkey")
   recipe        Recipe @relation(fields: [recipe_id], references: [recipe_id], map: "Recipe_IngredientMeasurement_fkey")
-
 }
