@@ -28,6 +28,11 @@ Starting the database: `docker-compose up -d`
 turbo run build
 ```
 
+## Fastify
+
+Access the URL to view the API documentation:
+`http://127.0.0.1:7000/docs`
+
 # Turborepo starter
 
 This is an official starter Turborepo.
