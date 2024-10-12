@@ -1,8 +1,7 @@
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 import Fastify, { FastifyInstance } from 'fastify'
-import dotenv from 'dotenv'
 export function createServer(): FastifyInstance {
-  dotenv.config()
+  require('dotenv').config()
   const fastify = Fastify({
     logger: {
       transport:
