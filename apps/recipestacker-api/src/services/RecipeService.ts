@@ -34,7 +34,12 @@ interface CreateIngredientMeasurementProps {
   quantity: number
 }
 
-interface UpdateOneRecipeProps {}
+interface UpdateOneRecipeProps {
+  recipe_id: string
+  name: string
+  description: string
+  ingredient_measurements: CreateIngredientMeasurementProps[]
+}
 
 interface CreateOneRecipeProps {
   name: string
@@ -79,7 +84,54 @@ export class RecipeService {
     })
   }
 
-  async updateOneRecipe(props: UpdateOneRecipeProps) {}
+  async updateOneRecipe(props: UpdateOneRecipeProps) {
+    this.logger.info({ props }, 'updateOneRecipe')
+    const spoof_user_id = 'cm1yn5uhd0000s0bguset4bz9'
+    const { recipe_id, ingredient_measurements, ...rest } = props
+    const updatedRecipe = await this.prisma.recipe.update({
+      where: {
+        recipe_id,
+      },
+      data: {
+        ...rest,
+        User: {
+          connect: { user_id: spoof_user_id },
+        },
+        ingredient_measurements: {
+          upsert: ingredient_measurements.map(
+            ({ ingredient_id, ingredient_name, ingredient_description, unit, quantity }) => ({
+              where: {
+                ingredient_id_recipe_id: {
+                  ingredient_id: recipe_id || '',
+                  recipe_id,
+                },
+              },
+              update: {
+                quantity,
+                unit,
+              },
+              create: {
+                ingredient: ingredient_id
+                  ? {
+                      connect: {
+                        ingredient_id,
+                      },
+                    }
+                  : {
+                      create: {
+                        name: ingredient_name,
+                        description: ingredient_description,
+                      },
+                    },
+                quantity,
+                unit,
+              },
+            }),
+          ),
+        },
+      },
+    })
+  }
 
   async findManyRecipes(props: FindManyRecipeProps) {
     this.logger.info({ props }, 'findManyRecipes')
