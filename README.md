@@ -20,9 +20,11 @@ Starting the database: `docker-compose up -d`
 
 `npx prisma migrate dev` on database update.
 
-`npx prisma studio` to view the database.
+`npx prisma studio` to view the database. Error? Is docker running?
 
 ## Turbo
+
+Navigate to the recipe-api directory and run the following command: `npm run dev` or if on Windows, `npm run dev-windows`.
 
 ```node
 turbo run build

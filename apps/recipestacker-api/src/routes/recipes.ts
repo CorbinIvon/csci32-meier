@@ -72,6 +72,25 @@ const recipe: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       })
     },
   )
+
+  fastify.withTypeProvider<TypeBoxTypeProvider>().get(
+    '/recipes/:id',
+    {
+      schema: {
+        tags: ['Endpoint: Get one recipe'],
+        description: 'Endpoint to get one recipe',
+        resopnse: {
+          200: RecipeType,
+          404: RecipeNotFoundType,
+        },
+      },
+    },
+    async function (request: any, reply) {
+      return fastify.recipeService.findOneRecipe({
+        recipe_id: request.params.id,
+      })
+    },
+  )
   fastify.withTypeProvider<TypeBoxTypeProvider>().post(
     '/recipes',
     {
