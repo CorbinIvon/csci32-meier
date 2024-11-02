@@ -150,46 +150,67 @@ export default function RandomNumberGuesserGame() {
               <div>
                 <label>Smallest Number:</label>
                 <br />
-                <Input type="number" value={minNumber} onChange={(e) => setMinNumber(Number(e.target.value))} />
+                <Input
+                  type="number"
+                  name="minNumber"
+                  id="minNumber"
+                  value={minNumber}
+                  onChange={(e) => setMinNumber(Number(e.target.value))}
+                />
               </div>
               <div>
                 <label>Largest Number:</label>
                 <br />
-                <Input type="number" value={maxNumber} onChange={(e) => setMaxNumber(Number(e.target.value))} />
+                <Input
+                  type="number"
+                  name="maxNumber"
+                  id="maxNumber"
+                  value={maxNumber}
+                  onChange={(e) => setMaxNumber(Number(e.target.value))}
+                />
               </div>
               <div>
                 <label>Max Tries:</label>
                 <br />
-                <Input type="number" value={maxTries} onChange={(e) => setMaxTries(Number(e.target.value))} />
+                <Input
+                  type="number"
+                  name="maxTries"
+                  id="maxTries"
+                  value={maxTries}
+                  onChange={(e) => setMaxTries(Number(e.target.value))}
+                />
               </div>
               <br />
               <h3 className="mb-2 text-2xl font-extrabold leading-none tracking-tight text-gray-600">More Settings!</h3>
               <div>
                 <Input
                   type="checkbox"
+                  name="showGuessSuggestions"
+                  id="showGuessSuggestions"
                   value={showGuessSuggestions}
                   onChange={(e) => setShowGuessSuggestions(e.target.checked)}
                   className="mr-2"
                 />
                 <label>Show Guess Suggestions</label>
-              </div>
-              <div>
                 <Input
                   type="checkbox"
+                  name="showPreviousGuesses"
+                  id="showPreviousGuesses"
                   value={showPreviousGuesses}
                   onChange={(e) => setShowPreviousGuesses(e.target.checked)}
                   className="mr-2"
                 />
-                <label>Show Previous Guesses</label>
-              </div>
-              <div>
-                <Input
-                  type="checkbox"
-                  value={hotAndCold}
-                  onChange={(e) => setHotAndCold(e.target.checked)}
-                  className="mr-2 ml-6"
-                  disabled={!showPreviousGuesses}
-                />
+                className="mr-2"
+                {showPreviousGuesses && (
+                  <Input
+                    type="checkbox"
+                    name="hotAndCold"
+                    id="hotAndCold"
+                    value={hotAndCold}
+                    onChange={(e) => setHotAndCold(e.target.checked)}
+                    className="mr-2 ml-6"
+                  />
+                )}
                 <label>Enable Hot and Cold indicators</label>
               </div>
               <br />
@@ -208,6 +229,8 @@ export default function RandomNumberGuesserGame() {
               <form onSubmit={handleGuess}>
                 <Input
                   type="number"
+                  name="userGuess"
+                  id="userGuess"
                   value={userGuess}
                   onChange={(e) => setUserGuess(Number(e.target.value))}
                   placeholder="Enter your guess"
