@@ -10,6 +10,8 @@ import { Input } from '@package/ui/input'
 import { Label } from '@package/ui/label'
 import { Wrapper } from '@package/ui/wrapper'
 
+const API_URL = process.env.NEXT_PUBLIC_RECIPESTACKER_API_URL
+
 type CreateRecipeProps = {
   name: string
   description: string
@@ -21,21 +23,7 @@ type CreateRecipeProps = {
 }
 
 async function createRecipe(recipeData: CreateRecipeProps) {
-  // {
-  //   "name": "string",
-  //   "description": "string",
-  //   "ingredient_measurements": [
-  //     {
-  //       "unit": "string",
-  //       "quantity": 0,
-  //       "ingredient_id": "string",
-  //       "ingredient_name": "string",
-  //       "ingredient_description": "string"
-  //     }
-  //   ]
-  // }
-
-  const response = await fetch('http://127.0.0.1:3001/recipes', {
+  const response = await fetch(`${API_URL}/recipes`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
