@@ -200,7 +200,6 @@ export default function RandomNumberGuesserGame() {
                   onChange={(e) => setShowPreviousGuesses(e.target.checked)}
                   className="mr-2"
                 />
-                className="mr-2"
                 {showPreviousGuesses && (
                   <Input
                     type="checkbox"
