@@ -34,7 +34,7 @@ async function start() {
   try {
     await fastify.listen({
       host: '127.0.0.1',
-      port: process.env.PORT ? Number(process.env.PORT) : 7000,
+      port: process.env.PORT ? Number(process.env.PORT) : 3001,
     })
   } catch (err) {
     fastify.log.error(err)

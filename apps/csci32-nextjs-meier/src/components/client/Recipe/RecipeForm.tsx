@@ -10,6 +10,46 @@ import { Input } from '@package/ui/input'
 import { Label } from '@package/ui/label'
 import { Wrapper } from '@package/ui/wrapper'
 
+type CreateRecipeProps = {
+  name: string
+  description: string
+  ingredient_measurements: {
+    ingredient_name: string
+    quantity: string
+    unit: string
+  }[]
+}
+
+async function createRecipe(recipeData: CreateRecipeProps) {
+  // {
+  //   "name": "string",
+  //   "description": "string",
+  //   "ingredient_measurements": [
+  //     {
+  //       "unit": "string",
+  //       "quantity": 0,
+  //       "ingredient_id": "string",
+  //       "ingredient_name": "string",
+  //       "ingredient_description": "string"
+  //     }
+  //   ]
+  // }
+
+  const response = await fetch('http://127.0.0.1:3001/recipes', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(recipeData),
+  })
+  if (!response.ok) {
+    console.error('Failed to create recipe')
+    return
+  }
+  const result = await response.json()
+  console.log('Recipe created successfully:', result)
+}
+
 export function RecipeForm() {
   const [recipeFormData, setRecipeFormData] = useState({ name: '', description: '' })
   const [ingredients, setIngredients] = useState<{ name: string; quantity: string; unit: string }[]>([])
@@ -28,9 +68,46 @@ export function RecipeForm() {
     setIngredients(ingredients.filter((_, i) => i !== index))
   }
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    // Handle form submission
+    const data = new FormData(e.currentTarget)
+
+    const recipeName = data.get('name') as string
+    const recipeDescription = data.get('description') as string
+    const ingredient_measurements = []
+    for (const key of data.keys()) {
+      if (key.includes('ingredient-name')) {
+        const index = key.split('-').pop()
+        const ingredient_name = data.get(key) as string
+        const unit = data.get(`ingredient-unit-${index}`) as string
+        const quantity = data.get(`ingredient-quantity-${index}`) as string
+        if (!ingredient_name || !unit || !quantity) {
+          console.error('Incomplete ingredient data')
+          return
+        }
+        ingredient_measurements.push({
+          ingredient_name,
+          unit,
+          quantity,
+        })
+      }
+    }
+    if (typeof recipeName !== 'string' || typeof recipeDescription !== 'string') {
+      console.error('Invalid recipe name or description')
+      return
+    }
+    if (ingredient_measurements.length === 0) {
+      console.error('No ingredients provided')
+      return
+    }
+    const recipeData: CreateRecipeProps = {
+      name: recipeName,
+      description: recipeDescription,
+      ingredient_measurements,
+    }
+    await createRecipe(recipeData)
+    setRecipeFormData({ name: '', description: '' })
+    setIngredients([])
   }
 
   return (
