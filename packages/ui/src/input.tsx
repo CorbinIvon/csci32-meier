@@ -1,5 +1,5 @@
 import { getInputSizeStyles, Size } from './size'
-import { HTMLInputTypeAttribute, useState } from 'react'
+import { HTMLInputTypeAttribute, useState, useEffect } from 'react'
 import { getVariantBorderStyles, getVariantInputTextStyles, getVariantOutlineStyles, Variant } from './variant'
 import { getCommonInputStyles } from './tokens'
 import { noop } from 'lodash'
@@ -17,6 +17,7 @@ interface InputProps {
   className?: string
   id: string
 }
+
 export function Input({
   variant = Variant.PRIMARY,
   size = Size.MEDIUM,
@@ -30,7 +31,14 @@ export function Input({
   type = 'text',
   placeholder,
 }: InputProps) {
-  const [internalValue, setInternalValue] = useState(value)
+  const [internalValue, setInternalValue] = useState(defaultValue)
+
+  useEffect(() => {
+    if (value !== undefined) {
+      setInternalValue(value)
+    }
+  }, [value])
+
   const sizeCssClasses = getInputSizeStyles(size)
   const variantOutlineCssClasses = getVariantOutlineStyles(variant)
   const variantBorderCssClasses = getVariantBorderStyles(variant)
@@ -39,7 +47,7 @@ export function Input({
 
   function handleKeyUp(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
-      onEnter(value ?? internalValue)
+      onEnter(internalValue)
     }
   }
 
@@ -51,11 +59,15 @@ export function Input({
       defaultValue={defaultValue}
       placeholder={placeholder}
       type={type}
-      value={value || internalValue}
+      value={internalValue}
       onKeyUp={handleKeyUp}
       onChange={
         onChange
-          ? (newValue) => onChange(newValue.currentTarget.value)
+          ? (newValue) => {
+              const val = newValue.currentTarget.value
+              setInternalValue(val)
+              onChange(val)
+            }
           : (newValue) => setInternalValue(newValue.currentTarget.value)
       }
     />
