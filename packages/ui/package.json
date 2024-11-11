@@ -22,6 +22,7 @@
     "build": "tailwindcss -i ./styles.css -o ./dist/index.css",
     "lint": "eslint src/",
     "dev": "tailwindcss -i ./styles.css -o ./dist/index.css --watch",
+    "dev-windows": "tailwindcss -i ./styles.css -o ./dist/index.css --watch",
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {

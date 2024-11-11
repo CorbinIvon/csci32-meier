@@ -11,6 +11,7 @@
     "db:push": "turbo run db:push",
     "db:seed": "turbo run db:seed",
     "dev": "turbo dev",
+    "dev-windows": "turbo dev-windows",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "generate": "turbo run generate"
@@ -32,6 +33,7 @@
   ],
   "dependencies": {
     "@prisma/client": "5.10.2",
-    "fastify": "^5.0.0"
+    "fastify": "^5.0.0",
+    "turbo": "^2.2.3"
   }
 }

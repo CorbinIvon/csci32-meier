@@ -12,6 +12,7 @@
     "build": "tsc",
     "lint": "eslint . --max-warnings 0",
     "dev": "tsc --watch",
+    "dev-windows": "tsc --watch",
     "generate:component": "turbo gen react-component"
   },
   "devDependencies": {
