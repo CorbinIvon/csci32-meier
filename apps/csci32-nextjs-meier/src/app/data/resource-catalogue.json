@@ -6,7 +6,8 @@
         { "title": "Week 1", "url": "/pages/CSCI32Assignments/week1" },
         { "title": "Week 2", "url": "/pages/CSCI32Assignments/week2" },
         { "title": "Week 3", "url": "/pages/CSCI32Assignments/week3" },
-        { "title": "Week 4", "url": "/pages/CSCI32Assignments/week4" }
+        { "title": "Week 4", "url": "/pages/CSCI32Assignments/week4" },
+        { "title": "Recipestacker Frontend", "url": "/pages/CSCI32Assignments/recipestacker" }
       ]
     },
     {

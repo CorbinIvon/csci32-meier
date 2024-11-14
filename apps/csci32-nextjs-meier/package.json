@@ -11,14 +11,15 @@
   },
   "dependencies": {
     "@package/math": "*",
-    "@package/sso": "*",
-    "@package/ui": "*",
     "@package/recipestacker-database": "*",
+    "@package/sso": "*",
+    "@package/ui": "^0.0.0",
     "@vercel/analytics": "^1.3.1",
     "@vercel/speed-insights": "^1.0.12",
     "next": "^14.2.13",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "swr": "^2.2.5"
   },
   "devDependencies": {
     "@package/eslint-config": "*",

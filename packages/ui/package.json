@@ -16,7 +16,14 @@
     "./variant": "./src/variant.ts",
     "./size": "./src/size.ts",
     "./tokens": "./src/tokens.ts",
-    "./input": "./src/input.tsx"
+    "./input": "./src/input.tsx",
+    "./flex": "./src/flex.tsx",
+    "./field": "./src/field.tsx",
+    "./fieldGroup": "./src/fieldGroup.tsx",
+    "./header": "./src/header.tsx",
+    "./label": "./src/label.tsx",
+    "./wrapper": "./src/wrapper.tsx",
+    "./tag": "./src/tag.tsx"
   },
   "scripts": {
     "build": "tailwindcss -i ./styles.css -o ./dist/index.css",
@@ -30,6 +37,7 @@
     "@package/typescript-config": "*",
     "@turbo/gen": "^1.12.4",
     "@types/eslint": "^8.56.5",
+    "@types/lodash": "^4.17.13",
     "@types/node": "^20.11.24",
     "@types/react": "^18.2.61",
     "@types/react-dom": "^18.2.19",
@@ -39,6 +47,7 @@
   },
   "dependencies": {
     "autoprefixer": "^10.4.20",
+    "lodash": "^4.17.21",
     "postcss": "^8.4.45",
     "react": "^18.2.0"
   }

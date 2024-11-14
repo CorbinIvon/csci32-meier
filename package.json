@@ -32,8 +32,10 @@
     "packages/*"
   ],
   "dependencies": {
+    "@package/ui": "^0.0.0",
     "@prisma/client": "5.10.2",
+    "classnames": "^2.5.1",
     "fastify": "^5.0.0",
-    "turbo": "^2.2.3"
+    "lodash": "^4.17.21"
   }
 }

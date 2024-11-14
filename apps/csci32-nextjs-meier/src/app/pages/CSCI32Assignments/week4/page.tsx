@@ -34,7 +34,7 @@ const Csci32AssignmentWeek4 = () => {
               name="name"
               id="name"
               value={inputValueName}
-              setValue={setInputValueName}
+              onChange={(e) => setInputValueName(e.target.value)}
             />
             <Button
               size={Size.MEDIUM}
@@ -53,7 +53,7 @@ const Csci32AssignmentWeek4 = () => {
               name="favAnimal"
               id="favAnimal"
               value={inputValueFavoriteAnimal}
-              setValue={setInputValueFavoriteAnimal}
+              onChange={(e) => setInputValueFavoriteAnimal(e.target.value)}
             />
             <Button
               size={Size.MEDIUM}
@@ -72,7 +72,7 @@ const Csci32AssignmentWeek4 = () => {
               name="highestScore"
               id="highestScore"
               value={inputValueHighestScore}
-              setValue={setInputValueHighestScore}
+              onChange={(e) => setInputValueHighestScore(e.target.value)}
             />
             <Button
               size={Size.MEDIUM}

@@ -13,7 +13,7 @@ export default fp<FastifyDynamicSwaggerOptions>(async (fastify) => {
       },
       servers: [
         {
-          url: 'http://127.0.0.1:7000',
+          url: process.env.NEXT_PUBLIC_RECIPESTACKER_API_URL || 'http://127.0.0.1:3001',
           description: 'Development server',
         },
       ],

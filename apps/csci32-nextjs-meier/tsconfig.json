@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "target": "es2015",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -17,6 +18,8 @@
         "name": "next"
       }
     ],
+    "outDir": "dist",
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "@package/*": ["../../packages/*"],
@@ -24,6 +27,11 @@
       "@math/*": ["../../packages/math/src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src"],
   "exclude": ["node_modules"]
 }
