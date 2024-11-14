@@ -20,6 +20,7 @@ interface FindOneRecipeProps {
 
 interface FindManyRecipeProps {
   name?: string
+  ingredients: string
   sortColumn?: string
   sortOrder?: SortOrder
   take?: number
