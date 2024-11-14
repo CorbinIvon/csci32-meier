@@ -67,7 +67,7 @@ export class RecipeService {
     }
   }
 
-  async getFirstUser() {
+  async getOrCreateFirstUser() {
     const user = await this.prisma.user.findFirst()
     if (!user) {
       console.log('DEVELOPER METHOD: Creating user')
@@ -100,7 +100,7 @@ export class RecipeService {
 
   async updateOneRecipe(props: UpdateOneRecipeProps) {
     this.logger.info({ props }, 'updateOneRecipe')
-    const { user_id } = await this.getFirstUser()
+    const { user_id } = await this.getOrCreateFirstUser()
     const { recipe_id, ingredient_measurements, ...rest } = props
     const updatedRecipe = await this.prisma.recipe.update({
       where: {
@@ -172,7 +172,7 @@ export class RecipeService {
 
   async createOneRecipe(props: CreateOneRecipeProps) {
     const { name, description, ingredient_measurements } = props
-    const { user_id } = await this.getFirstUser()
+    const { user_id } = await this.getOrCreateFirstUser()
     const directions = '' //TODO: Implement directions.
     const recipe = await this.prisma.recipe.create({
       data: {
