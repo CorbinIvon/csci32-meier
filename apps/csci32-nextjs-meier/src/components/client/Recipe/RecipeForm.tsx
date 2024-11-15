@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { Button } from '@package/ui/button'
 import { Card } from '@package/ui/card'
 import { Code } from '@package/ui/code'
@@ -9,8 +9,11 @@ import { Header } from '@package/ui/header'
 import { Input } from '@package/ui/input'
 import { Label } from '@package/ui/label'
 import { Wrapper } from '@package/ui/wrapper'
+import { RecipeContext } from '@/app/pages/CSCI32Assignments/recipestacker/context/RecipeContext'
 
 const API_URL = process.env.NEXT_PUBLIC_RECIPESTACKER_API_URL
+
+const { setShowRecipeForm, mutate } = useContext(RecipeContext)
 
 type CreateRecipeProps = {
   name: string
@@ -96,6 +99,7 @@ export function RecipeForm() {
     await createRecipe(recipeData)
     setRecipeFormData({ name: '', description: '' })
     setIngredients([])
+    mutate()
   }
 
   return (
