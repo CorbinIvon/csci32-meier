@@ -13,14 +13,13 @@ import { RecipeContext } from '@/app/pages/CSCI32Assignments/recipestacker/conte
 
 const API_URL = process.env.NEXT_PUBLIC_RECIPESTACKER_API_URL
 
-const { setShowRecipeForm, mutate } = useContext(RecipeContext)
-
 type CreateRecipeProps = {
   name: string
   description: string
   ingredient_measurements: {
     ingredient_name: string
-    quantity: string
+    ingredient_description: string
+    quantity: number
     unit: string
   }[]
 }
@@ -42,6 +41,8 @@ async function createRecipe(recipeData: CreateRecipeProps) {
 }
 
 export function RecipeForm() {
+  const { setShowRecipeForm, mutate } = useContext(RecipeContext)
+
   const [recipeFormData, setRecipeFormData] = useState({ name: '', description: '' })
   const [ingredients, setIngredients] = useState<{ name: string; quantity: string; unit: string }[]>([])
 
@@ -71,13 +72,14 @@ export function RecipeForm() {
         const index = key.split('-').pop()
         const ingredient_name = data.get(key) as string
         const unit = data.get(`ingredient-unit-${index}`) as string
-        const quantity = data.get(`ingredient-quantity-${index}`) as string
-        if (!ingredient_name || !unit || !quantity) {
-          console.error('Incomplete ingredient data')
+        const quantity = Number(data.get(`ingredient-quantity-${index}`))
+        if (!ingredient_name || !unit || isNaN(quantity)) {
+          console.error('Incomplete or invalid ingredient data')
           return
         }
         ingredient_measurements.push({
           ingredient_name,
+          ingredient_description: '', // Add empty description for new ingredients
           unit,
           quantity,
         })

@@ -6,13 +6,14 @@ export const UpsertIngredientMeasurementTypeboxType = Type.Object({
   unit: Type.String(),
   quantity: Type.Number(),
   ingredient_id: Type.Optional(Type.String()),
-  ingredient_name: Type.Optional(Type.String()),
-  ingredient_description: Type.Optional(Type.String()),
+  ingredient_name: Type.String(),
+  ingredient_description: Type.String(),
 })
 
 export const UpdateRecipeTypeboxType = Type.Object({
   name: Type.Optional(Type.String()),
   description: Type.Optional(Type.String()),
+  directions: Type.Optional(Type.String()),
   ingredient_measurements: Type.Optional(UpsertIngredientMeasurementTypeboxType),
 })
 
@@ -29,6 +30,7 @@ export const IngredientMeasurementTypeboxType = Type.Object({
     ingredient_id: Type.String(),
     name: Type.Union([Type.String(), Type.Null()]),
     description: Type.Union([Type.String(), Type.Null()]),
+    image: Type.Union([Type.String(), Type.Null()]),
   }),
 })
 
@@ -36,8 +38,9 @@ export const RecipeType = Type.Object({
   recipe_id: Type.String(),
   name: Type.String(),
   description: Type.String(),
+  directions: Type.String(),
+  image: Type.Union([Type.String(), Type.Null()]),
   ingredient_measurements: Type.Array(IngredientMeasurementTypeboxType),
-  user_id: Type.String(),
 })
 
 export const RecipeNotFoundType = Type.Object({
@@ -51,31 +54,38 @@ const recipe: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     '/recipes',
     {
       schema: {
-        schema: {
-          tags: ['Endpoint: Get all recipes'],
-          description: 'Endpoint to get all recipes',
-          response: {
-            200: Type.Array(
-              Type.Object({
-                recipe_id: Type.String(),
-                name: Type.String(),
-                description: Type.String(),
-                ingredient_measurements: Type.Array(IngredientMeasurementTypeboxType),
-              }),
-            ),
-            404: RecipeNotFoundType,
-          },
+        tags: ['Endpoint: Get all recipes'],
+        description: 'Endpoint: Get all recipes',
+        response: {
+          200: Type.Array(RecipeType),
+          404: RecipeNotFoundType,
         },
       },
     },
+
     async function (request: any, reply) {
-      return fastify.recipeService.findManyRecipes({
+      const recipes = await fastify.recipeService.findManyRecipes({
         name: request.query.name,
+        ingredients: request.query.ingredients,
         sortColumn: request.query.sortColumn,
         sortOrder: request.query.sortOrder,
         take: request.query.take,
         skip: request.query.skip,
+        user_id: request.query.user_id,
       })
+      if (recipes) {
+        const mappedRecipes = recipes?.map((recipe) => ({
+          recipe_id: recipe.recipe_id,
+          name: recipe.name,
+          description: recipe.description ?? '',
+          directions: recipe.directions,
+          image: recipe.image,
+          ingredient_measurements: recipe.ingredient_measurements,
+        }))
+        return reply.send(mappedRecipes)
+      } else {
+        return reply.notFound()
+      }
     },
   )
 
@@ -101,24 +111,37 @@ const recipe: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       })
     },
   )
+
   fastify.withTypeProvider<TypeBoxTypeProvider>().get(
     '/recipes/:id',
     {
       schema: {
         tags: ['Endpoint: Get one recipe'],
         description: 'Endpoint to get one recipe',
-        resopnse: {
+        response: {
           200: RecipeType,
           404: RecipeNotFoundType,
         },
       },
     },
     async function (request: any, reply) {
-      return fastify.recipeService.findOneRecipe({
+      const recipe = await fastify.recipeService.findOneRecipe({
         recipe_id: request.params.id,
       })
+      if (!recipe) {
+        return reply.notFound()
+      }
+      return {
+        recipe_id: recipe.recipe_id,
+        name: recipe.name,
+        description: recipe.description ?? '',
+        directions: recipe.directions,
+        image: recipe.image,
+        ingredient_measurements: recipe.ingredient_measurements,
+      }
     },
   )
+
   fastify.withTypeProvider<TypeBoxTypeProvider>().post(
     '/recipes',
     {
