@@ -36,10 +36,7 @@ export default function RecipeHome() {
     checkDatabase()
   }, [])
   const popup = showDbError ? (
-    <Popup
-      message={`Database connection error. Please try again later. Error: ${dbStatusMessage}`}
-      type={PopupType.ERROR}
-    />
+    <Popup message={`Database connection error. Please try again later. ${dbStatusMessage}`} type={PopupType.ERROR} />
   ) : null
   return (
     <Wrapper>
