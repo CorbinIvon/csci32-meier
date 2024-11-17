@@ -163,5 +163,31 @@ const recipe: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       })
     },
   )
+
+  fastify.withTypeProvider<TypeBoxTypeProvider>().delete(
+    '/recipes/:id',
+    {
+      schema: {
+        tags: ['Endpoint: Delete a recipe'],
+        description: 'Endpoint to delete a recipe',
+        response: {
+          200: Type.Object({ message: Type.String() }),
+          404: RecipeNotFoundType,
+        },
+      },
+    },
+    async function (request: any, reply) {
+      const success = await fastify.recipeService.deleteOneRecipe({
+        recipe_id: request.params.id,
+      })
+
+      if (!success) {
+        return reply.notFound()
+      }
+
+      return { message: 'Recipe deleted successfully' }
+    },
+  )
 }
+
 export default recipe

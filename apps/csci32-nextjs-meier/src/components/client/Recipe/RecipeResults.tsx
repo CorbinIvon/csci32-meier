@@ -1,25 +1,22 @@
 import { RecipeContext } from '@/app/pages/CSCI32Assignments/recipestacker/context/RecipeContext'
+import { Card } from '@package/ui/src/card'
 import { Flex } from '@package/ui/src/flex'
 import { useContext } from 'react'
 
 export default function RecipeResults() {
-  const { recipes, dbStatus, dbStatusMessage } = useContext(RecipeContext)
+  const { recipes, dbStatus, dbStatusMessage, mutate } = useContext(RecipeContext)
   return dbStatus ? (
     <>
       <h1>Saved Recipes</h1>
       <Flex className="flex-wrap">
         {recipes?.map((recipe) => (
-          <div key={recipe.recipe_id}>
-            <h2>{recipe.name}</h2>
-            <p>{recipe.description}</p>
-            <ul>
-              {recipe.ingredient_measurements.map(({ quantity, unit, ingredient }, index) => (
-                <li key={index}>
-                  {ingredient.name} - {quantity} {quantity && parseFloat(quantity) > 1 ? unit + 's' : unit}
-                </li>
-              ))}
-            </ul>
-          </div>
+          <Card
+            key={recipe.recipe_id}
+            recipeId={recipe.recipe_id}
+            title={recipe.name}
+            ingredients={recipe.ingredient_measurements}
+            onDelete={() => mutate()}
+          />
         ))}
       </Flex>
     </>

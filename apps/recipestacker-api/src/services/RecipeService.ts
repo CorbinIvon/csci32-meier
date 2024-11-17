@@ -54,6 +54,10 @@ interface GetRecipeOrderByProps {
   sortOrder: SortOrder
 }
 
+interface DeleteOneRecipeProps {
+  recipe_id: string
+}
+
 export class RecipeService {
   logger: FastifyBaseLogger
   prisma: PrismaClient
@@ -229,5 +233,30 @@ export class RecipeService {
       },
     })
     return recipe
+  }
+
+  async deleteOneRecipe(props: DeleteOneRecipeProps): Promise<boolean> {
+    try {
+      this.logger.info({ props }, 'deleteOneRecipe')
+
+      // First delete all related ingredient measurements
+      await this.prisma.ingredientMeasurement.deleteMany({
+        where: {
+          recipe_id: props.recipe_id,
+        },
+      })
+
+      // Then delete the recipe
+      await this.prisma.recipe.delete({
+        where: {
+          recipe_id: props.recipe_id,
+        },
+      })
+
+      return true
+    } catch (error) {
+      this.logger.error(error, 'Failed to delete recipe')
+      return false
+    }
   }
 }
