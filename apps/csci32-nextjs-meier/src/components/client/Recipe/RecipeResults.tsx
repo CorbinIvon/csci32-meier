@@ -3,10 +3,10 @@ import { Flex } from '@package/ui/src/flex'
 import { useContext } from 'react'
 
 export default function RecipeResults() {
-  const { recipes } = useContext(RecipeContext)
-  return (
+  const { recipes, dbStatus, dbStatusMessage } = useContext(RecipeContext)
+  return dbStatus ? (
     <>
-      <h1>Recipe Results</h1>
+      <h1>Saved Recipes</h1>
       <Flex className="flex-wrap">
         {recipes?.map((recipe) => (
           <div key={recipe.recipe_id}>
@@ -23,5 +23,7 @@ export default function RecipeResults() {
         ))}
       </Flex>
     </>
+  ) : (
+    <></>
   )
 }

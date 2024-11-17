@@ -23,7 +23,8 @@
     "./header": "./src/header.tsx",
     "./label": "./src/label.tsx",
     "./wrapper": "./src/wrapper.tsx",
-    "./tag": "./src/tag.tsx"
+    "./tag": "./src/tag.tsx",
+    "./popup": "./src/popup.tsx"
   },
   "scripts": {
     "build": "tailwindcss -i ./styles.css -o ./dist/index.css",

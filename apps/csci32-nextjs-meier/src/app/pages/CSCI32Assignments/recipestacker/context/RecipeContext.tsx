@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useState } from 'react'
+import React, { createContext, ReactNode, useState, useEffect } from 'react'
 import { useRecipes } from '../hooks/useRecipes'
 
 export type RecipeContextType = {
@@ -13,6 +13,8 @@ export type RecipeContextType = {
   setIngredientQuery: (query: string) => void
   showRecipeForm: boolean
   setShowRecipeForm: (showRecipeForm: boolean) => void
+  dbStatus: boolean
+  dbStatusMessage?: string
 }
 
 export type Ingredient = {
@@ -46,6 +48,8 @@ const RecipeContext = createContext<RecipeContextType>({
   setIngredientQuery: () => {},
   showRecipeForm: false,
   setShowRecipeForm: () => {},
+  dbStatus: false,
+  dbStatusMessage: undefined,
 })
 
 const RecipeProvider = ({ children }: { children: ReactNode }) => {
@@ -59,6 +63,27 @@ const RecipeProvider = ({ children }: { children: ReactNode }) => {
   const [recipeNameQuery, setRecipeNameQuery] = useState('')
   const [ingredientQuery, setIngredientQuery] = useState('')
   const [ingredients, setIngredients] = useState<string[]>([])
+  const [dbStatus, setDbStatus] = useState(false)
+  const [dbStatusMessage, setDbStatusMessage] = useState<string>('')
+
+  useEffect(() => {
+    const checkDatabase = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_RECIPESTACKER_API_URL}/`)
+        const data = await response.json()
+        console.log(data)
+        setDbStatus(data.root)
+        if (data.error) setDbStatusMessage(`Error: ${data.error.name}`)
+      } catch (error) {
+        setDbStatus(false)
+        setDbStatusMessage(`Failed to connect to API: ${error instanceof Error ? error.message : String(error)}`)
+      }
+    }
+
+    checkDatabase()
+    const interval = setInterval(checkDatabase, 30000) // Check every 30 seconds
+    return () => clearInterval(interval)
+  }, [])
 
   const { data: recipes, mutate } = useRecipes({ name: recipeNameQuery, ingredients: ingredients.join(',') })
 
@@ -76,6 +101,8 @@ const RecipeProvider = ({ children }: { children: ReactNode }) => {
         setIngredientQuery,
         showRecipeForm,
         setShowRecipeForm,
+        dbStatus,
+        dbStatusMessage,
       }}
     >
       {children}
