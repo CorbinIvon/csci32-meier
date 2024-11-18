@@ -40,11 +40,52 @@ async function createRecipe(recipeData: CreateRecipeProps) {
   console.log('Recipe created successfully:', result)
 }
 
-export function RecipeForm() {
-  const { setShowRecipeForm, mutate } = useContext(RecipeContext)
+async function editRecipe(recipeId: string, recipeData: CreateRecipeProps) {
+  const response = await fetch(`${API_URL}/recipes/${recipeId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(recipeData),
+  })
+  if (!response.ok) {
+    console.error('Failed to update recipe')
+    return
+  }
+  const result = await response.json()
+  console.log('Recipe updated successfully:', result)
+}
 
-  const [recipeFormData, setRecipeFormData] = useState({ name: '', description: '' })
-  const [ingredients, setIngredients] = useState<{ name: string; quantity: string; unit: string }[]>([])
+type InitialDataType = {
+  name: string
+  description: string
+  recipe_id?: string
+  ingredient_measurements?: Array<{
+    ingredient: { name: string }
+    quantity: number
+    unit: string
+  }>
+} | null
+
+export function RecipeForm({
+  editMode = false,
+  initialData = null,
+}: {
+  editMode?: boolean
+  initialData?: InitialDataType
+}) {
+  const { setShowRecipeForm, mutate } = useContext(RecipeContext)
+  const [recipeFormData, setRecipeFormData] = useState({
+    name: initialData?.name || '',
+    description: initialData?.description || '',
+  })
+  const [ingredients, setIngredients] = useState(
+    initialData?.ingredient_measurements?.map((im) => ({
+      name: im.ingredient.name,
+      quantity: String(im.quantity),
+      unit: im.unit,
+    })) || [],
+  )
 
   const handleIngredientChange = (index: number, field: string, value: string) => {
     const newIngredients = [...ingredients]
@@ -98,15 +139,22 @@ export function RecipeForm() {
       description: recipeDescription,
       ingredient_measurements,
     }
-    await createRecipe(recipeData)
+
+    if (editMode && initialData?.recipe_id) {
+      await editRecipe(initialData.recipe_id, recipeData)
+    } else {
+      await createRecipe(recipeData)
+    }
+
     setRecipeFormData({ name: '', description: '' })
     setIngredients([])
+    setShowRecipeForm(false)
     mutate()
   }
 
   return (
     <Wrapper>
-      <Header variant="h1">Recipe Form</Header>
+      <Header variant="h1">{editMode ? 'Edit Recipe' : 'New Recipe'}</Header>
       <form onSubmit={handleSubmit}>
         <FieldGroup>
           <Field>

@@ -15,6 +15,8 @@ export type RecipeContextType = {
   setShowRecipeForm: (showRecipeForm: boolean) => void
   dbStatus: boolean
   dbStatusMessage?: string
+  editingRecipe: RecipeType | null
+  handleEdit: (recipe: RecipeType) => void
 }
 
 export type Ingredient = {
@@ -50,6 +52,8 @@ const RecipeContext = createContext<RecipeContextType>({
   setShowRecipeForm: () => {},
   dbStatus: false,
   dbStatusMessage: undefined,
+  editingRecipe: null,
+  handleEdit: () => {},
 })
 
 const RecipeProvider = ({ children }: { children: ReactNode }) => {
@@ -65,6 +69,7 @@ const RecipeProvider = ({ children }: { children: ReactNode }) => {
   const [ingredients, setIngredients] = useState<string[]>([])
   const [dbStatus, setDbStatus] = useState(false)
   const [dbStatusMessage, setDbStatusMessage] = useState<string>('')
+  const [editingRecipe, setEditingRecipe] = useState<RecipeType | null>(null)
 
   useEffect(() => {
     const checkDatabase = async () => {
@@ -87,6 +92,11 @@ const RecipeProvider = ({ children }: { children: ReactNode }) => {
 
   const { data: recipes, mutate } = useRecipes({ name: recipeNameQuery, ingredients: ingredients.join(',') })
 
+  const handleEdit = (recipe: RecipeType) => {
+    setEditingRecipe(recipe)
+    setShowRecipeForm(true)
+  }
+
   return (
     <RecipeContext.Provider
       value={{
@@ -103,6 +113,8 @@ const RecipeProvider = ({ children }: { children: ReactNode }) => {
         setShowRecipeForm,
         dbStatus,
         dbStatusMessage,
+        editingRecipe,
+        handleEdit,
       }}
     >
       {children}
