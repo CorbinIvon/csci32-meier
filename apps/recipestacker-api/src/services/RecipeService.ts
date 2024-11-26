@@ -38,9 +38,10 @@ interface CreateIngredientMeasurementProps {
 
 interface UpdateOneRecipeProps {
   recipe_id: string
-  name: string
-  description: string
-  ingredient_measurements: CreateIngredientMeasurementProps[]
+  name?: string
+  description?: string
+  ingredient_measurements?: CreateIngredientMeasurementProps[]
+  deleted?: Date
 }
 
 interface CreateOneRecipeProps {
@@ -93,6 +94,7 @@ export class RecipeService {
     return this.prisma.recipe.findFirst({
       where: {
         recipe_id,
+        deleted: null,
       },
       include: {
         ingredient_measurements: {
@@ -108,48 +110,55 @@ export class RecipeService {
     this.logger.info({ props }, 'updateOneRecipe')
     const { user_id } = await this.getOrCreateFirstUser()
     const { recipe_id, ingredient_measurements, ...rest } = props
-    const updatedRecipe = await this.prisma.recipe.update({
+
+    const updateData: any = {
+      ...rest,
+      User: {
+        connect: { user_id },
+      },
+    }
+
+    if (Array.isArray(ingredient_measurements) && ingredient_measurements.length > 0) {
+      updateData.ingredient_measurements = {
+        upsert: ingredient_measurements.map(
+          ({ ingredient_id, ingredient_name, ingredient_description, unit, quantity }) => ({
+            where: {
+              ingredient_id_recipe_id: {
+                ingredient_id: ingredient_id || '',
+                recipe_id,
+              },
+            },
+            update: {
+              quantity,
+              unit,
+            },
+            create: {
+              ingredient: ingredient_id
+                ? {
+                    connect: {
+                      ingredient_id,
+                    },
+                  }
+                : {
+                    create: {
+                      name: ingredient_name,
+                      description: ingredient_description,
+                    },
+                  },
+              quantity,
+              unit,
+            },
+          }),
+        ),
+      }
+    }
+
+    return this.prisma.recipe.update({
       where: {
         recipe_id,
+        deleted: null,
       },
-      data: {
-        ...rest,
-        User: {
-          connect: { user_id: user_id },
-        },
-        ingredient_measurements: {
-          upsert: ingredient_measurements.map(
-            ({ ingredient_id, ingredient_name, ingredient_description, unit, quantity }) => ({
-              where: {
-                ingredient_id_recipe_id: {
-                  ingredient_id: recipe_id || '',
-                  recipe_id,
-                },
-              },
-              update: {
-                quantity,
-                unit,
-              },
-              create: {
-                ingredient: ingredient_id
-                  ? {
-                      connect: {
-                        ingredient_id,
-                      },
-                    }
-                  : {
-                      create: {
-                        name: ingredient_name,
-                        description: ingredient_description,
-                      },
-                    },
-                quantity,
-                unit,
-              },
-            }),
-          ),
-        },
-      },
+      data: updateData,
     })
   }
 
@@ -170,6 +179,7 @@ export class RecipeService {
         name: {
           contains: name,
         },
+        deleted: null,
         AND: ingredientsArray.map((ingredient) => ({
           ingredient_measurements: {
             some: {

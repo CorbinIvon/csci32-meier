@@ -10,6 +10,17 @@ export type CreateRecipeProps = {
   description: string
 }
 
+export type UpdateRecipeProps = {
+  name?: string
+  ingredient_measurements?: {
+    ingredient_name: string
+    quantity: number
+    unit: string
+  }[]
+  deleted?: Date
+  description?: string
+}
+
 async function postHelper({ path, body }: { path: string; body: string }) {
   return fetch(`${process.env.NEXT_PUBLIC_RECIPESTACKER_API_URL}${path}`, {
     method: 'POST',
@@ -21,6 +32,23 @@ async function postHelper({ path, body }: { path: string; body: string }) {
   })
 }
 
+async function putHelper({ path, params }: { path: string; params: UpdateRecipeProps }) {
+  return fetch(`${process.env.NEXT_PUBLIC_RECIPESTACKER_API_URL}${path}`, {
+    method: 'PUT',
+    body: JSON.stringify(params),
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json',
+    },
+  })
+}
+
+export function deleteRecipe(recipe_id: string) {
+  return putHelper({
+    path: `/recipes/${recipe_id}`,
+    params: { deleted: new Date() },
+  })
+}
 export function createRecipe(params: CreateRecipeProps) {
   return postHelper({ path: '/recipes', body: JSON.stringify(params) })
 }

@@ -1,4 +1,5 @@
 import React from 'react'
+import { deleteRecipe } from '../../../apps/csci32-nextjs-meier/src/app/pages/CSCI32Assignments/recipestacker/hooks/useRecipes'
 
 const API_URL = process.env.NEXT_PUBLIC_RECIPESTACKER_API_URL
 
@@ -22,17 +23,6 @@ type IngredientMeasurement = {
   quantity: string
 }
 
-async function deleteRecipe(recipeId: string) {
-  const response = await fetch(`${API_URL}/recipes/${recipeId}`, {
-    method: 'DELETE',
-  })
-  if (!response.ok) {
-    console.error('Failed to delete recipe')
-    return false
-  }
-  return true
-}
-
 export function Card({
   recipe,
   onDelete,
@@ -51,8 +41,8 @@ export function Card({
     e.preventDefault()
     if (window.confirm('Are you sure you want to delete this recipe? This action can not be undone')) {
       if (recipe.recipe_id) {
-        const success = await deleteRecipe(recipe.recipe_id)
-        if (success && onDelete) {
+        const response = await deleteRecipe(recipe.recipe_id)
+        if (response.ok && onDelete) {
           onDelete()
         }
       }

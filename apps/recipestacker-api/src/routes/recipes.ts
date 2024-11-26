@@ -15,6 +15,8 @@ export const UpdateRecipeTypeboxType = Type.Object({
   description: Type.Optional(Type.String()),
   directions: Type.Optional(Type.String()),
   ingredient_measurements: Type.Optional(UpsertIngredientMeasurementTypeboxType),
+  // deleted is treated as a string here since TypeBox doesn't directly support Date objects
+  deleted: Type.Optional(Type.Union([Type.String(), Type.Null()])),
 })
 
 export const CreateRecipeTypeboxType = Type.Object({
@@ -108,6 +110,7 @@ const recipe: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         name: request.body.name,
         description: request.body.description,
         ingredient_measurements: request.body.ingredient_measurements,
+        deleted: request.body.deleted,
       })
     },
   )

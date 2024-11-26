@@ -7,7 +7,6 @@ export default function RecipeResults() {
   const { recipes, dbStatus, dbStatusMessage, mutate } = useContext(RecipeContext)
 
   const handleEdit = async (recipe: RecipeType) => {
-    console.error('TODO: Implement edit recipe')
     const response = await fetch(`${process.env.NEXT_PUBLIC_RECIPESTACKER_API_URL}/recipes/${recipe.recipe_id}`, {
       method: 'PUT',
       headers: {
