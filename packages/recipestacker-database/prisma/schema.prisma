@@ -22,6 +22,7 @@ model Recipe {
   recipe_id     String    @id @default(cuid())
   name          String
   description   String?
+  deleted       DateTime? @default(dbgenerated())
   ingredients   Ingredient[]
   directions    String
   image         String?
