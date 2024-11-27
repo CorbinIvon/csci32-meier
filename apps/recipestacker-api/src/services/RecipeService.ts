@@ -1,63 +1,25 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { FastifyBaseLogger } from 'fastify'
+import {
+  SortOrder,
+  Recipe,
+  FindOneRecipeProps,
+  FindManyRecipeProps,
+  CreateOneRecipeProps,
+  UpdateOneRecipeProps,
+  DeleteOneRecipeProps,
+  GetRecipeOrderByProps,
+  ApiResponse,
+  IngredientMeasurementDTO,
+} from '@package/recipestacker-types/src/types'
 
-export enum SortOrder {
-  ASC = 'asc',
-  DESC = 'desc',
-}
-
-export const DEFAULT_TAKE = 15
-export const DEFAULT_SKIP = 0
-
-interface RecipeServiceProps {
+export interface RecipeServiceProps {
   logger: FastifyBaseLogger
   prisma: PrismaClient
 }
 
-interface FindOneRecipeProps {
-  recipe_id: string
-}
-
-interface FindManyRecipeProps {
-  name?: string
-  ingredients: string
-  sortColumn?: string
-  sortOrder?: SortOrder
-  take?: number
-  skip?: number
-  user_id?: string
-}
-
-interface CreateIngredientMeasurementProps {
-  ingredient_id?: string
-  ingredient_name: string
-  ingredient_description: string
-  unit: string
-  quantity: number
-}
-
-interface UpdateOneRecipeProps {
-  recipe_id: string
-  name?: string
-  description?: string
-  ingredient_measurements?: CreateIngredientMeasurementProps[]
-  deleted?: Date
-}
-
-interface CreateOneRecipeProps {
-  name: string
-  description: string
-  ingredient_measurements: CreateIngredientMeasurementProps[]
-}
-
-interface GetRecipeOrderByProps {
-  sortColumn: string
-  sortOrder: SortOrder
-}
-
-interface DeleteOneRecipeProps {
-  recipe_id: string
-}
+export const DEFAULT_TAKE = 15
+export const DEFAULT_SKIP = 0
 
 export class RecipeService {
   logger: FastifyBaseLogger
@@ -120,36 +82,34 @@ export class RecipeService {
 
     if (Array.isArray(ingredient_measurements) && ingredient_measurements.length > 0) {
       updateData.ingredient_measurements = {
-        upsert: ingredient_measurements.map(
-          ({ ingredient_id, ingredient_name, ingredient_description, unit, quantity }) => ({
-            where: {
-              ingredient_id_recipe_id: {
-                ingredient_id: ingredient_id || '',
-                recipe_id,
-              },
+        upsert: ingredient_measurements.map((measurement: IngredientMeasurementDTO) => ({
+          where: {
+            ingredient_id_recipe_id: {
+              ingredient_id: measurement.ingredient_id || '',
+              recipe_id,
             },
-            update: {
-              quantity,
-              unit,
-            },
-            create: {
-              ingredient: ingredient_id
-                ? {
-                    connect: {
-                      ingredient_id,
-                    },
-                  }
-                : {
-                    create: {
-                      name: ingredient_name,
-                      description: ingredient_description,
-                    },
+          },
+          update: {
+            quantity: measurement.quantity,
+            unit: measurement.unit,
+          },
+          create: {
+            ingredient: measurement.ingredient_id
+              ? {
+                  connect: {
+                    ingredient_id: measurement.ingredient_id,
                   },
-              quantity,
-              unit,
-            },
-          }),
-        ),
+                }
+              : {
+                  create: {
+                    name: measurement.ingredient_name,
+                    description: measurement.ingredient_description,
+                  },
+                },
+            quantity: measurement.quantity,
+            unit: measurement.unit,
+          },
+        })),
       }
     }
 
@@ -221,24 +181,22 @@ export class RecipeService {
         description,
         directions,
         ingredient_measurements: {
-          create: ingredient_measurements.map(
-            ({ ingredient_id, ingredient_name, ingredient_description, unit, quantity }) => ({
-              ingredient: ingredient_id
-                ? {
-                    connect: {
-                      ingredient_id,
-                    },
-                  }
-                : {
-                    create: {
-                      name: ingredient_name,
-                      description: ingredient_description,
-                    },
+          create: ingredient_measurements.map((measurement: IngredientMeasurementDTO) => ({
+            ingredient: measurement.ingredient_id
+              ? {
+                  connect: {
+                    ingredient_id: measurement.ingredient_id,
                   },
-              quantity,
-              unit,
-            }),
-          ),
+                }
+              : {
+                  create: {
+                    name: measurement.ingredient_name,
+                    description: measurement.ingredient_description,
+                  },
+                },
+            quantity: measurement.quantity,
+            unit: measurement.unit,
+          })),
         },
       },
     })

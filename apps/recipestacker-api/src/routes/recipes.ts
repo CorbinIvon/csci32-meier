@@ -1,7 +1,15 @@
-import Fastify, { FastifyPluginAsync } from 'fastify'
+import { FastifyPluginAsync } from 'fastify'
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 import { Type } from '@sinclair/typebox'
+import {
+  Recipe,
+  CreateRecipeDTO,
+  UpdateRecipeDTO,
+  ApiResponse,
+  BaseIngredientMeasurement,
+} from '@package/recipestacker-types/src/types'
 
+// Convert existing Typebox types to match the types package
 export const UpsertIngredientMeasurementTypeboxType = Type.Object({
   unit: Type.String(),
   quantity: Type.Number(),
@@ -10,12 +18,22 @@ export const UpsertIngredientMeasurementTypeboxType = Type.Object({
   ingredient_description: Type.String(),
 })
 
+// Update other type definitions to match the types package
 export const UpdateRecipeTypeboxType = Type.Object({
   name: Type.Optional(Type.String()),
   description: Type.Optional(Type.String()),
   directions: Type.Optional(Type.String()),
-  ingredient_measurements: Type.Optional(UpsertIngredientMeasurementTypeboxType),
-  // deleted is treated as a string here since TypeBox doesn't directly support Date objects
+  ingredient_measurements: Type.Optional(
+    Type.Array(
+      Type.Object({
+        unit: Type.String(),
+        quantity: Type.Number(),
+        ingredient_id: Type.Optional(Type.String()),
+        ingredient_name: Type.String(),
+        ingredient_description: Type.String(),
+      }),
+    ),
+  ),
   deleted: Type.Optional(Type.Union([Type.String(), Type.Null()])),
 })
 

@@ -1,4 +1,5 @@
-import { RecipeContext, RecipeType } from '@/app/pages/CSCI32Assignments/recipestacker/context/RecipeContext'
+import { RecipeContext } from '@/app/pages/CSCI32Assignments/recipestacker/context/RecipeContext'
+import { Recipe, ApiResponse } from '@package/recipestacker-types/src/types'
 import { Card } from '@package/ui/src/card'
 import { Flex } from '@package/ui/src/flex'
 import { useContext } from 'react'
@@ -6,7 +7,7 @@ import { useContext } from 'react'
 export default function RecipeResults() {
   const { recipes, dbStatus, dbStatusMessage, mutate } = useContext(RecipeContext)
 
-  const handleEdit = async (recipe: RecipeType) => {
+  const handleEdit = async (recipe: Recipe) => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_RECIPESTACKER_API_URL}/recipes/${recipe.recipe_id}`, {
       method: 'PUT',
       headers: {

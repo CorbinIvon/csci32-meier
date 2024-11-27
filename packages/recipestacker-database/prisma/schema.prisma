@@ -49,4 +49,5 @@ model IngredientMeasurement {
   quantity      Int
   ingredient    Ingredient @relation(fields: [ingredient_id], references: [ingredient_id], map: "Ingredient_IngredientMeasurement_fkey")
   recipe        Recipe @relation(fields: [recipe_id], references: [recipe_id], map: "Recipe_IngredientMeasurement_fkey")
+  @@index([recipe_id])
 }

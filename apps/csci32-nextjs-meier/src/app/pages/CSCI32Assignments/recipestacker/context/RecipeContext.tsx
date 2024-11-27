@@ -1,42 +1,6 @@
 import React, { createContext, ReactNode, useState, useEffect } from 'react'
 import { useRecipes } from '../hooks/useRecipes'
-
-export type RecipeContextType = {
-  recipes: RecipeType[]
-  mutate: () => void
-  recipeNameQuery: string
-  setRecipeNameQuery: (query: string) => void
-  ingredients: string[]
-  ingredientQuery: string
-  removeIngredient: (index: string) => void
-  setIngredients: (ingredients: string[]) => void
-  setIngredientQuery: (query: string) => void
-  showRecipeForm: boolean
-  setShowRecipeForm: (showRecipeForm: boolean) => void
-  dbStatus: boolean
-  dbStatusMessage?: string
-  editingRecipe: RecipeType | null
-  handleEdit: (recipe: RecipeType) => void
-}
-
-export type Ingredient = {
-  ingredient_id?: string
-  name: string
-  description: string
-}
-
-export type IngredientMeasurement = {
-  ingredient: Ingredient
-  unit: string
-  quantity: string
-}
-
-export type RecipeType = {
-  recipe_id: string
-  name: string
-  description: string
-  ingredient_measurements: IngredientMeasurement[]
-}
+import { Recipe, RecipeContextType } from '@package/recipestacker-types/src/types'
 
 const RecipeContext = createContext<RecipeContextType>({
   recipes: [],
@@ -69,7 +33,7 @@ const RecipeProvider = ({ children }: { children: ReactNode }) => {
   const [ingredients, setIngredients] = useState<string[]>([])
   const [dbStatus, setDbStatus] = useState(false)
   const [dbStatusMessage, setDbStatusMessage] = useState<string>('')
-  const [editingRecipe, setEditingRecipe] = useState<RecipeType | null>(null)
+  const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null)
 
   useEffect(() => {
     const checkDatabase = async () => {
@@ -92,7 +56,7 @@ const RecipeProvider = ({ children }: { children: ReactNode }) => {
 
   const { data: recipes, mutate } = useRecipes({ name: recipeNameQuery, ingredients: ingredients.join(',') })
 
-  const handleEdit = (recipe: RecipeType) => {
+  const handleEdit = (recipe: Recipe) => {
     setEditingRecipe(recipe)
     setShowRecipeForm(true)
   }

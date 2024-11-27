@@ -1,27 +1,8 @@
 import React from 'react'
+import { Recipe } from '@package/recipestacker-types/src/types'
 import { deleteRecipe } from '../../../apps/csci32-nextjs-meier/src/app/pages/CSCI32Assignments/recipestacker/hooks/useRecipes'
 
 const API_URL = process.env.NEXT_PUBLIC_RECIPESTACKER_API_URL
-
-// types from: root/apps/csci32-nextjs-meier/src/app/pages/CSCI32Assignments/recipestacker/context/RecipeContext.tsx
-type RecipeType = {
-  recipe_id: string
-  name: string
-  description: string
-  ingredient_measurements: IngredientMeasurement[]
-}
-
-type Ingredient = {
-  ingredient_id?: string
-  name: string
-  description: string
-}
-
-type IngredientMeasurement = {
-  ingredient: Ingredient
-  unit: string
-  quantity: string
-}
 
 export function Card({
   recipe,
@@ -29,13 +10,13 @@ export function Card({
   onEdit,
   className,
 }: {
-  recipe: RecipeType
+  recipe: Recipe
   className?: string
   onDelete?: () => void
-  onEdit?: (recipe: RecipeType) => void
+  onEdit?: (recipe: Recipe) => void
 }): JSX.Element {
   const [isEditing, setIsEditing] = React.useState(false)
-  const [editedRecipe, setEditedRecipe] = React.useState<RecipeType>(recipe)
+  const [editedRecipe, setEditedRecipe] = React.useState<Recipe>(recipe)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -111,12 +92,12 @@ export function Card({
                 className="flex-grow p-1 border rounded"
               />
               <input
-                type="text"
+                type="number"
                 value={measurement.quantity}
                 onChange={(e) => {
                   const newMeasurements = [...editedRecipe.ingredient_measurements]
                   if (newMeasurements && newMeasurements[index]) {
-                    newMeasurements[index].quantity = e.target.value
+                    newMeasurements[index].quantity = Number(e.target.value)
                     setEditedRecipe({ ...editedRecipe, ingredient_measurements: newMeasurements })
                   }
                 }}
@@ -189,7 +170,7 @@ export function Card({
               <span className="font-medium">{ingredient.name}</span>
               <span className="mx-2">-</span>
               <span>
-                {quantity} {quantity && parseFloat(quantity) > 1 ? unit + 's' : unit}
+                {quantity} {quantity && Number(quantity) > 1 ? unit + 's' : unit}
               </span>
             </li>
           ))}
