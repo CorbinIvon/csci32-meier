@@ -13,7 +13,7 @@ export interface BaseRecipe {
 export interface BaseIngredientMeasurement {
   unit: string
   quantity: number
-  ingredient: BaseIngredient
+  ingredient: BaseIngredient // Keep this as BaseIngredient
 }
 
 // Database Models (persistence layer)
@@ -29,6 +29,11 @@ export interface Recipe extends BaseRecipe {
   directions: string
   image?: string | null
   User?: User[]
+  ingredient_measurements: {
+    unit: string
+    quantity: number
+    ingredient: Ingredient // This is the key change - we explicitly use Ingredient here
+  }[]
 }
 
 export interface IngredientMeasurement extends BaseIngredientMeasurement {
@@ -67,6 +72,7 @@ export interface UpdateRecipeDTO {
   name?: string
   description?: string
   deleted?: Date | string | null
+  directions?: string
   ingredient_measurements?: IngredientMeasurementDTO[]
 }
 
@@ -85,7 +91,7 @@ export interface SearchRecipeDTO {
 // Context Types
 export interface RecipeContextType {
   recipes: Recipe[]
-  mutate: () => void
+  mutate: (data?: Recipe[]) => Promise<any>
   recipeNameQuery: string
   setRecipeNameQuery: (query: string) => void
   ingredients: string[]
@@ -169,3 +175,80 @@ export interface DeleteOneRecipeProps {
 export interface UpdateOneRecipeProps extends UpdateRecipeDTO {
   // Additional service-specific fields if needed
 }
+
+// Type Conversion Utilities
+export const convertToUpdateRecipeDTO = (recipe: Recipe): UpdateRecipeDTO => ({
+  recipe_id: recipe.recipe_id,
+  name: recipe.name,
+  description: recipe.description,
+  ingredient_measurements: recipe.ingredient_measurements.map(
+    (im): IngredientMeasurementDTO => ({
+      unit: im.unit,
+      quantity: im.quantity,
+      ingredient_name: im.ingredient.name,
+      ingredient_description: im.ingredient.description || '',
+      ingredient_id: im.ingredient.ingredient_id,
+    }),
+  ),
+})
+
+// TypeBox Type Definitions
+import { Type } from '@sinclair/typebox'
+
+export const UpsertIngredientMeasurementTypeboxType = Type.Object({
+  unit: Type.String(),
+  quantity: Type.Number(),
+  ingredient_id: Type.Optional(Type.String()),
+  ingredient_name: Type.String(),
+  ingredient_description: Type.String(),
+})
+
+export const UpdateRecipeTypeboxType = Type.Object({
+  name: Type.Optional(Type.String()),
+  description: Type.Optional(Type.String()),
+  directions: Type.Optional(Type.String()),
+  ingredient_measurements: Type.Optional(
+    Type.Array(
+      Type.Object({
+        unit: Type.String(),
+        quantity: Type.Number(),
+        ingredient_id: Type.Optional(Type.String()),
+        ingredient_name: Type.String(),
+        ingredient_description: Type.String(),
+      }),
+    ),
+  ),
+  deleted: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+})
+
+export const CreateRecipeTypeboxType = Type.Object({
+  name: Type.String(),
+  description: Type.String(),
+  ingredient_measurements: Type.Array(UpsertIngredientMeasurementTypeboxType),
+})
+
+export const IngredientMeasurementTypeboxType = Type.Object({
+  unit: Type.String(),
+  quantity: Type.Number(),
+  ingredient: Type.Object({
+    ingredient_id: Type.String(),
+    name: Type.Union([Type.String(), Type.Null()]),
+    description: Type.Union([Type.String(), Type.Null()]),
+    image: Type.Union([Type.String(), Type.Null()]),
+  }),
+})
+
+export const RecipeTypeboxType = Type.Object({
+  recipe_id: Type.String(),
+  name: Type.String(),
+  description: Type.String(),
+  directions: Type.String(),
+  image: Type.Union([Type.String(), Type.Null()]),
+  ingredient_measurements: Type.Array(IngredientMeasurementTypeboxType),
+})
+
+export const RecipeNotFoundTypeboxType = Type.Object({
+  statusCode: Type.Literal(404),
+  message: Type.String(),
+  error: Type.Literal('Not Found'),
+})

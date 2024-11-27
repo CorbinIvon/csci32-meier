@@ -23,6 +23,11 @@ export interface Recipe extends BaseRecipe {
     directions: string;
     image?: string | null;
     User?: User[];
+    ingredient_measurements: {
+        unit: string;
+        quantity: number;
+        ingredient: Ingredient;
+    }[];
 }
 export interface IngredientMeasurement extends BaseIngredientMeasurement {
     ingredient_id: string;
@@ -54,6 +59,7 @@ export interface UpdateRecipeDTO {
     name?: string;
     description?: string;
     deleted?: Date | string | null;
+    directions?: string;
     ingredient_measurements?: IngredientMeasurementDTO[];
 }
 export interface CreateIngredientDTO extends BaseIngredient {
@@ -69,7 +75,7 @@ export interface SearchRecipeDTO {
 }
 export interface RecipeContextType {
     recipes: Recipe[];
-    mutate: () => void;
+    mutate: (data?: Recipe[]) => Promise<any>;
     recipeNameQuery: string;
     setRecipeNameQuery: (query: string) => void;
     ingredients: string[];
@@ -138,4 +144,68 @@ export interface DeleteOneRecipeProps {
 }
 export interface UpdateOneRecipeProps extends UpdateRecipeDTO {
 }
+export declare const convertToUpdateRecipeDTO: (recipe: Recipe) => UpdateRecipeDTO;
+export declare const UpsertIngredientMeasurementTypeboxType: import("@sinclair/typebox").TObject<{
+    unit: import("@sinclair/typebox").TString;
+    quantity: import("@sinclair/typebox").TNumber;
+    ingredient_id: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+    ingredient_name: import("@sinclair/typebox").TString;
+    ingredient_description: import("@sinclair/typebox").TString;
+}>;
+export declare const UpdateRecipeTypeboxType: import("@sinclair/typebox").TObject<{
+    name: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+    description: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+    directions: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+    ingredient_measurements: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TArray<import("@sinclair/typebox").TObject<{
+        unit: import("@sinclair/typebox").TString;
+        quantity: import("@sinclair/typebox").TNumber;
+        ingredient_id: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+        ingredient_name: import("@sinclair/typebox").TString;
+        ingredient_description: import("@sinclair/typebox").TString;
+    }>>>;
+    deleted: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>>;
+}>;
+export declare const CreateRecipeTypeboxType: import("@sinclair/typebox").TObject<{
+    name: import("@sinclair/typebox").TString;
+    description: import("@sinclair/typebox").TString;
+    ingredient_measurements: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TObject<{
+        unit: import("@sinclair/typebox").TString;
+        quantity: import("@sinclair/typebox").TNumber;
+        ingredient_id: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+        ingredient_name: import("@sinclair/typebox").TString;
+        ingredient_description: import("@sinclair/typebox").TString;
+    }>>;
+}>;
+export declare const IngredientMeasurementTypeboxType: import("@sinclair/typebox").TObject<{
+    unit: import("@sinclair/typebox").TString;
+    quantity: import("@sinclair/typebox").TNumber;
+    ingredient: import("@sinclair/typebox").TObject<{
+        ingredient_id: import("@sinclair/typebox").TString;
+        name: import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
+        description: import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
+        image: import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
+    }>;
+}>;
+export declare const RecipeTypeboxType: import("@sinclair/typebox").TObject<{
+    recipe_id: import("@sinclair/typebox").TString;
+    name: import("@sinclair/typebox").TString;
+    description: import("@sinclair/typebox").TString;
+    directions: import("@sinclair/typebox").TString;
+    image: import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
+    ingredient_measurements: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TObject<{
+        unit: import("@sinclair/typebox").TString;
+        quantity: import("@sinclair/typebox").TNumber;
+        ingredient: import("@sinclair/typebox").TObject<{
+            ingredient_id: import("@sinclair/typebox").TString;
+            name: import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
+            description: import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
+            image: import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
+        }>;
+    }>>;
+}>;
+export declare const RecipeNotFoundTypeboxType: import("@sinclair/typebox").TObject<{
+    statusCode: import("@sinclair/typebox").TLiteral<404>;
+    message: import("@sinclair/typebox").TString;
+    error: import("@sinclair/typebox").TLiteral<"Not Found">;
+}>;
 //# sourceMappingURL=types.d.ts.map

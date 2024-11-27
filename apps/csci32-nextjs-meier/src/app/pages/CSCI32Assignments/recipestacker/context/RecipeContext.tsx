@@ -4,7 +4,7 @@ import { Recipe, RecipeContextType } from '@package/recipestacker-types/src/type
 
 const RecipeContext = createContext<RecipeContextType>({
   recipes: [],
-  mutate: () => {},
+  mutate: () => Promise.resolve(),
   recipeNameQuery: '',
   setRecipeNameQuery: () => {},
   ingredients: [],

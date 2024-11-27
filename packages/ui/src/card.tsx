@@ -1,6 +1,5 @@
 import React from 'react'
-import { Recipe } from '@package/recipestacker-types/src/types'
-import { deleteRecipe } from '../../../apps/csci32-nextjs-meier/src/app/pages/CSCI32Assignments/recipestacker/hooks/useRecipes'
+import { Recipe, UpdateRecipeDTO, convertToUpdateRecipeDTO } from '@package/recipestacker-types/src/types'
 
 const API_URL = process.env.NEXT_PUBLIC_RECIPESTACKER_API_URL
 
@@ -22,10 +21,42 @@ export function Card({
     e.preventDefault()
     if (window.confirm('Are you sure you want to delete this recipe? This action can not be undone')) {
       if (recipe.recipe_id) {
-        const response = await deleteRecipe(recipe.recipe_id)
+        const response = await fetch(`${API_URL}/recipes/${recipe.recipe_id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ...recipe, deleted: new Date().toISOString() }),
+        })
         if (response.ok && onDelete) {
           onDelete()
         }
+      }
+    }
+  }
+
+  const handleEdit = async () => {
+    if (onEdit && editedRecipe.recipe_id) {
+      const updateDTO = convertToUpdateRecipeDTO(editedRecipe)
+
+      try {
+        const response = await fetch(`${API_URL}/recipes/${editedRecipe.recipe_id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updateDTO),
+        })
+
+        if (response.ok) {
+          const updatedRecipe = await response.json()
+          onEdit(updatedRecipe) // Pass the server response instead of editedRecipe
+          setIsEditing(false)
+        } else {
+          console.error('Failed to update recipe:', await response.text())
+        }
+      } catch (error) {
+        console.error('Error updating recipe:', error)
       }
     }
   }
@@ -35,10 +66,7 @@ export function Card({
       <div className="absolute top-0 right-0 -mt-3 -mr-3 inline-flex">
         <button
           type="button"
-          onClick={() => {
-            if (onEdit) onEdit(editedRecipe)
-            setIsEditing(false)
-          }}
+          onClick={handleEdit}
           className="w-6 h-6 rounded-full mr-2
                    flex items-center justify-center
                    bg-white border border-gray-200
@@ -85,7 +113,13 @@ export function Card({
                 onChange={(e) => {
                   const newMeasurements = [...editedRecipe.ingredient_measurements]
                   if (newMeasurements && newMeasurements[index]) {
-                    newMeasurements[index].ingredient.name = e.target.value
+                    newMeasurements[index] = {
+                      ...newMeasurements[index],
+                      ingredient: {
+                        ...newMeasurements[index].ingredient,
+                        name: e.target.value,
+                      },
+                    }
                     setEditedRecipe({ ...editedRecipe, ingredient_measurements: newMeasurements })
                   }
                 }}
@@ -97,7 +131,10 @@ export function Card({
                 onChange={(e) => {
                   const newMeasurements = [...editedRecipe.ingredient_measurements]
                   if (newMeasurements && newMeasurements[index]) {
-                    newMeasurements[index].quantity = Number(e.target.value)
+                    newMeasurements[index] = {
+                      ...newMeasurements[index],
+                      quantity: Number(e.target.value),
+                    }
                     setEditedRecipe({ ...editedRecipe, ingredient_measurements: newMeasurements })
                   }
                 }}
@@ -109,7 +146,10 @@ export function Card({
                 onChange={(e) => {
                   const newMeasurements = [...editedRecipe.ingredient_measurements]
                   if (newMeasurements && newMeasurements[index]) {
-                    newMeasurements[index].unit = e.target.value
+                    newMeasurements[index] = {
+                      ...newMeasurements[index],
+                      unit: e.target.value,
+                    }
                     setEditedRecipe({ ...editedRecipe, ingredient_measurements: newMeasurements })
                   }
                 }}

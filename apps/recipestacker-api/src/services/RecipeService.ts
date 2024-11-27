@@ -70,56 +70,51 @@ export class RecipeService {
 
   async updateOneRecipe(props: UpdateOneRecipeProps) {
     this.logger.info({ props }, 'updateOneRecipe')
-    const { user_id } = await this.getOrCreateFirstUser()
     const { recipe_id, ingredient_measurements, ...rest } = props
 
-    const updateData: any = {
-      ...rest,
-      User: {
-        connect: { user_id },
-      },
-    }
+    try {
+      // First, delete existing measurements
+      await this.prisma.ingredientMeasurement.deleteMany({
+        where: { recipe_id },
+      })
 
-    if (Array.isArray(ingredient_measurements) && ingredient_measurements.length > 0) {
-      updateData.ingredient_measurements = {
-        upsert: ingredient_measurements.map((measurement: IngredientMeasurementDTO) => ({
-          where: {
-            ingredient_id_recipe_id: {
-              ingredient_id: measurement.ingredient_id || '',
-              recipe_id,
-            },
-          },
-          update: {
-            quantity: measurement.quantity,
-            unit: measurement.unit,
-          },
-          create: {
-            ingredient: measurement.ingredient_id
-              ? {
-                  connect: {
-                    ingredient_id: measurement.ingredient_id,
+      // Then update the recipe with new measurements
+      const updatedRecipe = await this.prisma.recipe.update({
+        where: { recipe_id },
+        data: {
+          ...rest,
+          ingredient_measurements: {
+            create: ingredient_measurements?.map((m) => ({
+              quantity: m.quantity,
+              unit: m.unit,
+              ingredient: {
+                connectOrCreate: {
+                  where: {
+                    ingredient_id: m.ingredient_id || '',
                   },
-                }
-              : {
                   create: {
-                    name: measurement.ingredient_name,
-                    description: measurement.ingredient_description,
+                    name: m.ingredient_name,
+                    description: m.ingredient_description,
                   },
                 },
-            quantity: measurement.quantity,
-            unit: measurement.unit,
+              },
+            })),
           },
-        })),
-      }
-    }
+        },
+        include: {
+          ingredient_measurements: {
+            include: {
+              ingredient: true,
+            },
+          },
+        },
+      })
 
-    return this.prisma.recipe.update({
-      where: {
-        recipe_id,
-        deleted: null,
-      },
-      data: updateData,
-    })
+      return updatedRecipe
+    } catch (error) {
+      this.logger.error(error, 'Failed to update recipe')
+      throw error
+    }
   }
 
   async findManyRecipes(props: FindManyRecipeProps) {
