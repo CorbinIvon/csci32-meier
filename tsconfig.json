@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@package/*": ["packages/*"],
+      "@recipestacker-types/*": ["packages/recipestacker-types/src/*"]
+    }
+  }
+}

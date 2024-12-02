@@ -1,53 +1,15 @@
-import Fastify, { FastifyPluginAsync } from 'fastify'
+import { FastifyPluginAsync } from 'fastify'
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
+import {
+  RecipeTypeboxType,
+  CreateRecipeTypeboxType,
+  UpdateRecipeTypeboxType,
+  RecipeNotFoundTypeboxType,
+  Recipe,
+  IngredientMeasurement,
+  IngredientMeasurementDTO,
+} from '@package/recipestacker-types/src/types'
 import { Type } from '@sinclair/typebox'
-
-export const UpsertIngredientMeasurementTypeboxType = Type.Object({
-  unit: Type.String(),
-  quantity: Type.Number(),
-  ingredient_id: Type.Optional(Type.String()),
-  ingredient_name: Type.String(),
-  ingredient_description: Type.String(),
-})
-
-export const UpdateRecipeTypeboxType = Type.Object({
-  name: Type.Optional(Type.String()),
-  description: Type.Optional(Type.String()),
-  directions: Type.Optional(Type.String()),
-  ingredient_measurements: Type.Optional(UpsertIngredientMeasurementTypeboxType),
-})
-
-export const CreateRecipeTypeboxType = Type.Object({
-  name: Type.String(),
-  description: Type.String(),
-  ingredient_measurements: Type.Array(UpsertIngredientMeasurementTypeboxType),
-})
-
-export const IngredientMeasurementTypeboxType = Type.Object({
-  unit: Type.String(),
-  quantity: Type.Number(),
-  ingredient: Type.Object({
-    ingredient_id: Type.String(),
-    name: Type.Union([Type.String(), Type.Null()]),
-    description: Type.Union([Type.String(), Type.Null()]),
-    image: Type.Union([Type.String(), Type.Null()]),
-  }),
-})
-
-export const RecipeType = Type.Object({
-  recipe_id: Type.String(),
-  name: Type.String(),
-  description: Type.String(),
-  directions: Type.String(),
-  image: Type.Union([Type.String(), Type.Null()]),
-  ingredient_measurements: Type.Array(IngredientMeasurementTypeboxType),
-})
-
-export const RecipeNotFoundType = Type.Object({
-  statusCode: Type.Literal(404),
-  message: Type.String(),
-  error: Type.Literal('Not Found'),
-})
 
 const recipe: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
   fastify.withTypeProvider<TypeBoxTypeProvider>().get(
@@ -57,8 +19,8 @@ const recipe: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         tags: ['Endpoint: Get all recipes'],
         description: 'Endpoint: Get all recipes',
         response: {
-          200: Type.Array(RecipeType),
-          404: RecipeNotFoundType,
+          200: Type.Array(RecipeTypeboxType),
+          404: RecipeNotFoundTypeboxType,
         },
       },
     },
@@ -74,11 +36,11 @@ const recipe: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         user_id: request.query.user_id,
       })
       if (recipes) {
-        const mappedRecipes = recipes?.map((recipe) => ({
+        const mappedRecipes = recipes.map((recipe) => ({
           recipe_id: recipe.recipe_id,
           name: recipe.name,
-          description: recipe.description ?? '',
-          directions: recipe.directions,
+          description: recipe.description || '', // Ensure string type
+          directions: recipe.directions || '', // Ensure string type
           image: recipe.image,
           ingredient_measurements: recipe.ingredient_measurements,
         }))
@@ -95,20 +57,49 @@ const recipe: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       schema: {
         tags: ['Endpoint: Update a recipe'],
         description: 'Endpoint to update a recipe',
+        params: Type.Object({
+          id: Type.String(),
+        }),
         body: UpdateRecipeTypeboxType,
         response: {
-          200: Type.Object({ recipe_id: Type.String() }),
+          200: RecipeTypeboxType,
           400: Type.Object({ message: Type.String() }),
         },
       },
     },
     async function (request: any, reply) {
-      return fastify.recipeService.updateOneRecipe({
-        recipe_id: request.params.id,
-        name: request.body.name,
-        description: request.body.description,
-        ingredient_measurements: request.body.ingredient_measurements,
-      })
+      try {
+        const updatedRecipe = await fastify.recipeService.updateOneRecipe({
+          recipe_id: request.params.id,
+          name: request.body.name ?? '',
+          description: request.body.description ?? '',
+          directions: request.body.directions ?? '',
+          deleted: request.body.deleted,
+          ingredient_measurements: request.body.ingredient_measurements?.map((im: IngredientMeasurementDTO) => ({
+            unit: im.unit,
+            quantity: im.quantity,
+            ingredient_name: im.ingredient_name,
+            ingredient_description: im.ingredient_description || '',
+            ingredient_id: im.ingredient_id,
+          })),
+        })
+
+        if (!updatedRecipe || !updatedRecipe.ingredient_measurements) {
+          throw new Error('Failed to update recipe')
+        }
+
+        return reply.send({
+          recipe_id: updatedRecipe.recipe_id,
+          name: updatedRecipe.name,
+          description: updatedRecipe.description || '',
+          directions: updatedRecipe.directions || '',
+          image: updatedRecipe.image,
+          ingredient_measurements: updatedRecipe.ingredient_measurements,
+        })
+      } catch (error) {
+        fastify.log.error(error)
+        reply.code(400).send({ message: 'Failed to update recipe' })
+      }
     },
   )
 
@@ -119,8 +110,8 @@ const recipe: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         tags: ['Endpoint: Get one recipe'],
         description: 'Endpoint to get one recipe',
         response: {
-          200: RecipeType,
-          404: RecipeNotFoundType,
+          200: RecipeTypeboxType,
+          404: RecipeNotFoundTypeboxType,
         },
       },
     },
@@ -163,5 +154,38 @@ const recipe: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       })
     },
   )
+
+  fastify.withTypeProvider<TypeBoxTypeProvider>().delete(
+    '/recipes/:id',
+    {
+      schema: {
+        tags: ['Endpoint: Delete a recipe'],
+        description: 'Endpoint to delete a recipe',
+        params: Type.Object({
+          id: Type.String(),
+        }),
+        // Remove body validation entirely
+        response: {
+          200: Type.Object({
+            success: Type.Boolean(),
+            message: Type.String(),
+          }),
+          404: RecipeNotFoundTypeboxType,
+        },
+      },
+    },
+    async function (request, reply) {
+      const success = await fastify.recipeService.deleteOneRecipe({
+        recipe_id: request.params.id,
+      })
+
+      if (!success) {
+        return reply.notFound('Recipe not found')
+      }
+
+      return { success: true, message: 'Recipe deleted successfully' }
+    },
+  )
 }
+
 export default recipe

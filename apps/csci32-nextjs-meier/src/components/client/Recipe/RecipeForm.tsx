@@ -1,7 +1,6 @@
 import { useContext, useState } from 'react'
 import { Button } from '@package/ui/button'
-import { Card } from '@package/ui/card'
-import { Code } from '@package/ui/code'
+import { Card } from '@package/ui/src/card'
 import { Field } from '@package/ui/field'
 import { FieldGroup } from '@package/ui/fieldGroup'
 import { Flex } from '@package/ui/flex'
@@ -10,21 +9,12 @@ import { Input } from '@package/ui/input'
 import { Label } from '@package/ui/label'
 import { Wrapper } from '@package/ui/wrapper'
 import { RecipeContext } from '@/app/pages/CSCI32Assignments/recipestacker/context/RecipeContext'
+import { CreateRecipeDTO, Recipe, UpdateRecipeDTO, RecipeContextType } from '@package/recipestacker-types/src/types'
+import React from 'react'
 
 const API_URL = process.env.NEXT_PUBLIC_RECIPESTACKER_API_URL
 
-type CreateRecipeProps = {
-  name: string
-  description: string
-  ingredient_measurements: {
-    ingredient_name: string
-    ingredient_description: string
-    quantity: number
-    unit: string
-  }[]
-}
-
-async function createRecipe(recipeData: CreateRecipeProps) {
+async function createRecipe(recipeData: CreateRecipeDTO): Promise<Recipe> {
   const response = await fetch(`${API_URL}/recipes`, {
     method: 'POST',
     headers: {
@@ -33,138 +23,282 @@ async function createRecipe(recipeData: CreateRecipeProps) {
     body: JSON.stringify(recipeData),
   })
   if (!response.ok) {
-    console.error('Failed to create recipe')
-    return
+    throw new Error('Failed to create recipe')
   }
-  const result = await response.json()
-  console.log('Recipe created successfully:', result)
+  return response.json()
 }
 
-export function RecipeForm() {
-  const { setShowRecipeForm, mutate } = useContext(RecipeContext)
+type InitialDataType = Recipe | null
 
-  const [recipeFormData, setRecipeFormData] = useState({ name: '', description: '' })
-  const [ingredients, setIngredients] = useState<{ name: string; quantity: string; unit: string }[]>([])
+export function RecipeForm({
+  editMode = false,
+  initialData = null,
+}: {
+  editMode?: boolean
+  initialData?: InitialDataType
+}) {
+  const { setShowRecipeForm, mutate } = useContext<RecipeContextType>(RecipeContext)
+  const [editedRecipe, setEditedRecipe] = useState(initialData || ({} as Recipe))
+  const [newRecipe, setNewRecipe] = React.useState<CreateRecipeDTO>({
+    name: '',
+    description: '',
+    ingredient_measurements: [
+      {
+        unit: '',
+        quantity: 0,
+        ingredient_name: '',
+        ingredient_description: '',
+      },
+    ],
+  })
 
-  const handleIngredientChange = (index: number, field: string, value: string) => {
-    const newIngredients = [...ingredients]
-    newIngredients[index] = { ...newIngredients[index], [field]: value }
-    setIngredients(newIngredients)
+  const handleEdit = async (updatedRecipe: UpdateRecipeDTO) => {
+    try {
+      const response = await fetch(`${API_URL}/recipes/${updatedRecipe.recipe_id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedRecipe),
+      })
+      if (!response.ok) throw new Error('Failed to update recipe')
+      setShowRecipeForm(false)
+      mutate()
+    } catch (error) {
+      console.error('Failed to update recipe:', error)
+    }
   }
 
-  const addIngredient = () => {
-    setIngredients([...ingredients, { name: '', quantity: '', unit: '' }])
+  const handleCreate = async (recipe: CreateRecipeDTO) => {
+    try {
+      await createRecipe({
+        name: recipe.name,
+        description: recipe.description,
+        ingredient_measurements: recipe.ingredient_measurements.map((im) => ({
+          unit: im.unit,
+          quantity: im.quantity,
+          ingredient_name: im.ingredient_name,
+          ingredient_description: im.ingredient_description || '',
+          ingredient_id: im.ingredient_id,
+        })),
+      })
+      setShowRecipeForm(false)
+      mutate()
+    } catch (error) {
+      console.error('Failed to create recipe:', error)
+    }
   }
 
-  const removeIngredient = (index: number) => {
-    setIngredients(ingredients.filter((_, i) => i !== index))
-  }
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const data = new FormData(e.currentTarget)
-
-    const recipeName = data.get('name') as string
-    const recipeDescription = data.get('description') as string
-    const ingredient_measurements = []
-    for (const key of data.keys()) {
-      if (key.includes('ingredient-name')) {
-        const index = key.split('-').pop()
-        const ingredient_name = data.get(key) as string
-        const unit = data.get(`ingredient-unit-${index}`) as string
-        const quantity = Number(data.get(`ingredient-quantity-${index}`))
-        if (!ingredient_name || !unit || isNaN(quantity)) {
-          console.error('Incomplete or invalid ingredient data')
-          return
-        }
-        ingredient_measurements.push({
-          ingredient_name,
-          ingredient_description: '', // Add empty description for new ingredients
-          unit,
-          quantity,
-        })
-      }
-    }
-    if (typeof recipeName !== 'string' || typeof recipeDescription !== 'string') {
-      console.error('Invalid recipe name or description')
-      return
-    }
-    if (ingredient_measurements.length === 0) {
-      console.error('No ingredients provided')
-      return
-    }
-    const recipeData: CreateRecipeProps = {
-      name: recipeName,
-      description: recipeDescription,
-      ingredient_measurements,
-    }
-    await createRecipe(recipeData)
-    setRecipeFormData({ name: '', description: '' })
-    setIngredients([])
-    mutate()
+  if (editMode && initialData) {
+    return (
+      <Wrapper>
+        <Header variant="h1">Edit Recipe</Header>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            handleEdit({
+              recipe_id: editedRecipe.recipe_id,
+              name: editedRecipe.name,
+              description: editedRecipe.description,
+              directions: editedRecipe.directions,
+              ingredient_measurements: editedRecipe.ingredient_measurements.map((im) => ({
+                unit: im.unit,
+                quantity: im.quantity,
+                ingredient_name: im.ingredient.name,
+                ingredient_description: im.ingredient.description || '',
+                ingredient_id: im.ingredient.ingredient_id,
+              })),
+            })
+          }}
+        >
+          <FieldGroup>
+            <Field>
+              <Label htmlFor="name">Recipe Name</Label>
+              <Input
+                id="name"
+                name="name"
+                value={editedRecipe.name}
+                onChange={(value) => {
+                  setEditedRecipe({ ...editedRecipe, name: value })
+                }}
+              />
+            </Field>
+            <Field>
+              <Label htmlFor="description">Description</Label>
+              <Input
+                id="description"
+                name="description"
+                value={editedRecipe.description}
+                onChange={(value) => {
+                  setEditedRecipe({ ...editedRecipe, description: value })
+                }}
+              />
+            </Field>
+            <Field>
+              <Label>Ingredients</Label>
+              {editedRecipe.ingredient_measurements.map((measurement, index) => (
+                <Flex key={index}>
+                  <Input
+                    id={`ingredient-name-${index}`}
+                    name={`ingredient-name-${index}`}
+                    value={measurement.ingredient.name}
+                    onChange={(value) => {
+                      const newMeasurements = [...editedRecipe.ingredient_measurements]
+                      newMeasurements[index] = {
+                        ...newMeasurements[index],
+                        ingredient: {
+                          ...newMeasurements[index].ingredient,
+                          name: value,
+                        },
+                      }
+                      setEditedRecipe({
+                        ...editedRecipe,
+                        ingredient_measurements: newMeasurements,
+                      })
+                    }}
+                    placeholder="Ingredient name"
+                  />
+                  <Input
+                    id={`ingredient-quantity-${index}`}
+                    name={`ingredient-quantity-${index}`}
+                    type="number"
+                    value={measurement.quantity}
+                    onChange={(value) => {
+                      measurement.quantity = Number(value)
+                    }}
+                    placeholder="Quantity"
+                  />
+                  <Input
+                    id={`ingredient-unit-${index}`}
+                    name={`ingredient-unit-${index}`}
+                    value={measurement.unit}
+                    onChange={(value) => {
+                      measurement.unit = value
+                    }}
+                    placeholder="Unit"
+                  />
+                  <Button
+                    type="button"
+                    className="px-2"
+                    onClick={() => {
+                      const newMeasurements = editedRecipe.ingredient_measurements.filter((_, i) => i !== index)
+                      setEditedRecipe({
+                        ...editedRecipe,
+                        ingredient_measurements: newMeasurements,
+                      })
+                    }}
+                  >
+                    ✕
+                  </Button>
+                </Flex>
+              ))}
+            </Field>
+          </FieldGroup>
+          <Flex className="mt-4">
+            <Button type="submit">Save Changes</Button>
+          </Flex>
+        </form>
+      </Wrapper>
+    )
   }
 
   return (
     <Wrapper>
-      <Header variant="h1">Recipe Form</Header>
-      <form onSubmit={handleSubmit}>
+      <Header variant="h1">New Recipe</Header>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          handleCreate(newRecipe)
+        }}
+      >
         <FieldGroup>
           <Field>
-            <Label htmlFor="recipe-name">Recipe Name</Label>
+            <Label htmlFor="name">Recipe Name</Label>
             <Input
-              id="recipe-name"
+              id="name"
               name="name"
-              value={recipeFormData.name}
-              onChange={(e) => setRecipeFormData({ ...recipeFormData, name: e })}
-              placeholder="Enter recipe name"
+              value={newRecipe.name}
+              onChange={(value) => setNewRecipe({ ...newRecipe, name: value })}
             />
           </Field>
           <Field>
-            <Label htmlFor="recipe-description">Recipe Description</Label>
+            <Label htmlFor="description">Description</Label>
             <Input
-              id="recipe-description"
+              id="description"
               name="description"
-              value={recipeFormData.description}
-              onChange={(e) => setRecipeFormData({ ...recipeFormData, description: e })}
-              placeholder="Enter recipe description"
+              value={newRecipe.description}
+              onChange={(value) => setNewRecipe({ ...newRecipe, description: value })}
             />
           </Field>
-          {ingredients.map((ingredient, index) => (
-            <FieldGroup key={index}>
-              <Flex>
-                <Label>Ingredient {index + 1}</Label>
-                <Button onClick={() => removeIngredient(index)}>Remove</Button>
-              </Flex>
-              <Flex>
+          <Field>
+            <Label>Ingredients</Label>
+            {newRecipe.ingredient_measurements.map((measurement, index) => (
+              <Flex key={index}>
                 <Input
-                  id={`ingredient-name-${index}`}
-                  name={`ingredient-name-${index}`}
-                  placeholder="Name"
-                  value={ingredient.name}
-                  onChange={(e) => handleIngredientChange(index, 'name', e)}
+                  id={`new-ingredient-name-${index}`}
+                  name={`new-ingredient-name-${index}`}
+                  value={measurement.ingredient_name}
+                  onChange={(value) => {
+                    const measurements = [...newRecipe.ingredient_measurements]
+                    measurements[index] = { ...measurements[index], ingredient_name: value }
+                    setNewRecipe({ ...newRecipe, ingredient_measurements: measurements })
+                  }}
+                  placeholder="Ingredient name"
                 />
                 <Input
-                  id={`ingredient-quantity-${index}`}
-                  name={`ingredient-quantity-${index}`}
+                  id={`new-ingredient-quantity-${index}`}
+                  name={`new-ingredient-quantity-${index}`}
+                  type="number"
+                  value={measurement.quantity}
+                  onChange={(value) => {
+                    const measurements = [...newRecipe.ingredient_measurements]
+                    measurements[index] = { ...measurements[index], quantity: Number(value) }
+                    setNewRecipe({ ...newRecipe, ingredient_measurements: measurements })
+                  }}
                   placeholder="Quantity"
-                  value={ingredient.quantity}
-                  onChange={(e) => handleIngredientChange(index, 'quantity', e)}
                 />
                 <Input
-                  id={`ingredient-unit-${index}`}
-                  name={`ingredient-unit-${index}`}
+                  id={`new-ingredient-unit-${index}`}
+                  name={`new-ingredient-unit-${index}`}
+                  value={measurement.unit}
+                  onChange={(value) => {
+                    const measurements = [...newRecipe.ingredient_measurements]
+                    measurements[index] = { ...measurements[index], unit: value }
+                    setNewRecipe({ ...newRecipe, ingredient_measurements: measurements })
+                  }}
                   placeholder="Unit"
-                  value={ingredient.unit}
-                  onChange={(e) => handleIngredientChange(index, 'unit', e)}
                 />
+                <Button
+                  type="button"
+                  className="px-2"
+                  onClick={() => {
+                    const measurements = newRecipe.ingredient_measurements.filter((_, i) => i !== index)
+                    setNewRecipe({ ...newRecipe, ingredient_measurements: measurements })
+                  }}
+                >
+                  ✕
+                </Button>
               </Flex>
-            </FieldGroup>
-          ))}
-          <Flex>
-            <Button onClick={addIngredient}>Add Ingredient</Button>
-            <Button type="submit">Submit</Button>
-          </Flex>
+            ))}
+            <Button
+              type="button"
+              onClick={() => {
+                setNewRecipe({
+                  ...newRecipe,
+                  ingredient_measurements: [
+                    ...newRecipe.ingredient_measurements,
+                    { unit: '', quantity: 0, ingredient_name: '', ingredient_description: '' },
+                  ],
+                })
+              }}
+            >
+              Add Ingredient
+            </Button>
+          </Field>
         </FieldGroup>
+        <Flex className="mt-4">
+          <Button type="submit">Create Recipe</Button>
+        </Flex>
       </form>
     </Wrapper>
   )

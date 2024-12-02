@@ -1,14 +1,5 @@
 import useSWR from 'swr'
-
-export type CreateRecipeProps = {
-  name: string
-  ingredient_measurements: {
-    ingredient_name: string
-    quantity: number
-    unit: string
-  }[]
-  description: string
-}
+import { CreateRecipeDTO, UpdateRecipeDTO, SearchRecipeDTO, ApiResponse } from '@package/recipestacker-types/src/types'
 
 async function postHelper({ path, body }: { path: string; body: string }) {
   return fetch(`${process.env.NEXT_PUBLIC_RECIPESTACKER_API_URL}${path}`, {
@@ -21,7 +12,24 @@ async function postHelper({ path, body }: { path: string; body: string }) {
   })
 }
 
-export function createRecipe(params: CreateRecipeProps) {
+async function putHelper({ path, params }: { path: string; params: UpdateRecipeDTO }) {
+  return fetch(`${process.env.NEXT_PUBLIC_RECIPESTACKER_API_URL}${path}`, {
+    method: 'PUT',
+    body: JSON.stringify(params),
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json',
+    },
+  })
+}
+
+export function deleteRecipe(recipe_id: string) {
+  return fetch(`${process.env.NEXT_PUBLIC_RECIPESTACKER_API_URL}/recipes/${recipe_id}`, {
+    method: 'DELETE',
+  })
+}
+
+export function createRecipe(params: CreateRecipeDTO) {
   return postHelper({ path: '/recipes', body: JSON.stringify(params) })
 }
 
@@ -35,12 +43,18 @@ async function fetcher({ path, urlParams }: { path: string; urlParams?: string }
   return res.json()
 }
 
-type SearchProps = {
-  name?: string
-  ingredients?: string
-}
+export function useRecipes(params?: SearchRecipeDTO) {
+  const searchParams: Record<string, string> = {}
+  if (params) {
+    if (params.name) searchParams.name = params.name
+    if (params.ingredients) searchParams.ingredients = params.ingredients
+    if (params.sortColumn) searchParams.sortColumn = params.sortColumn
+    if (params.sortOrder) searchParams.sortOrder = params.sortOrder
+    if (params.take) searchParams.take = params.take.toString()
+    if (params.skip) searchParams.skip = params.skip.toString()
+    if (params.user_id) searchParams.user_id = params.user_id
+  }
 
-export function useRecipes(params?: SearchProps) {
-  const urlParams = new URLSearchParams(params).toString()
+  const urlParams = new URLSearchParams(searchParams).toString()
   return useSWR(['/recipes', urlParams], ([path, urlParams]) => fetcher({ path, urlParams }))
 }

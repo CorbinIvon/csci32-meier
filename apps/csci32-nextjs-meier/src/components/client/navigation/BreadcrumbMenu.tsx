@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 
 interface Item {
   title: string
@@ -18,6 +18,27 @@ const BreadcrumbMenu: React.FC<BreadcrumbMenuProps> = ({ data, searchTerm, onNav
   const [breadcrumb, setBreadcrumb] = useState<Item[]>([])
   const [currentItems, setCurrentItems] = useState<Item[]>(data)
 
+  const filterItems = useCallback(
+    (items: Item[], path: Item[] = []): Item[] => {
+      return items
+        .map((item) => {
+          const filteredSubItems = item.items ? filterItems(item.items, [...path, item]) : []
+          const matchesTitle = item.title.toLowerCase().includes(searchTerm.toLowerCase())
+
+          if (matchesTitle || filteredSubItems.length > 0) {
+            return {
+              ...item,
+              items: filteredSubItems.length > 0 ? filteredSubItems : item.items,
+              path: [...path, item], // Track the path to the result
+            }
+          }
+          return null
+        })
+        .filter(Boolean) as Item[]
+    },
+    [searchTerm],
+  )
+
   // Effect to handle search and navigation
   useEffect(() => {
     if (searchTerm) {
@@ -32,26 +53,9 @@ const BreadcrumbMenu: React.FC<BreadcrumbMenuProps> = ({ data, searchTerm, onNav
       const scopedItems = getItemsFromBreadcrumb(data, breadcrumb)
       setCurrentItems(scopedItems)
     }
-  }, [searchTerm, breadcrumb, data])
+  }, [searchTerm, breadcrumb, data, filterItems])
 
   // Filter items based on the search term globally
-  const filterItems = (items: Item[], path: Item[] = []): Item[] => {
-    return items
-      .map((item) => {
-        const filteredSubItems = item.items ? filterItems(item.items, [...path, item]) : []
-        const matchesTitle = item.title.toLowerCase().includes(searchTerm.toLowerCase())
-
-        if (matchesTitle || filteredSubItems.length > 0) {
-          return {
-            ...item,
-            items: filteredSubItems.length > 0 ? filteredSubItems : item.items,
-            path: [...path, item], // Track the path to the result
-          }
-        }
-        return null
-      })
-      .filter(Boolean) as Item[]
-  }
 
   // Get items based on the breadcrumb in the filtered data or root data
   const getItemsFromBreadcrumb = (items: Item[], breadcrumb: Item[]): Item[] => {
