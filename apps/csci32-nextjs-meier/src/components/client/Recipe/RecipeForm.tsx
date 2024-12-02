@@ -38,6 +38,19 @@ export function RecipeForm({
   initialData?: InitialDataType
 }) {
   const { setShowRecipeForm, mutate } = useContext<RecipeContextType>(RecipeContext)
+  const [editedRecipe, setEditedRecipe] = useState(initialData || ({} as Recipe))
+  const [newRecipe, setNewRecipe] = React.useState<CreateRecipeDTO>({
+    name: '',
+    description: '',
+    ingredient_measurements: [
+      {
+        unit: '',
+        quantity: 0,
+        ingredient_name: '',
+        ingredient_description: '',
+      },
+    ],
+  })
 
   const handleEdit = async (updatedRecipe: UpdateRecipeDTO) => {
     try {
@@ -77,8 +90,6 @@ export function RecipeForm({
   }
 
   if (editMode && initialData) {
-    const [editedRecipe, setEditedRecipe] = useState(initialData)
-
     return (
       <Wrapper>
         <Header variant="h1">Edit Recipe</Header>
@@ -190,20 +201,6 @@ export function RecipeForm({
       </Wrapper>
     )
   }
-
-  // New Recipe Form
-  const [newRecipe, setNewRecipe] = React.useState<CreateRecipeDTO>({
-    name: '',
-    description: '',
-    ingredient_measurements: [
-      {
-        unit: '',
-        quantity: 0,
-        ingredient_name: '',
-        ingredient_description: '',
-      },
-    ],
-  })
 
   return (
     <Wrapper>

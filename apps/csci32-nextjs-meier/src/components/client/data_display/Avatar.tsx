@@ -1,6 +1,6 @@
 // csci32-meier/src/app/components/client/data_display/Avatar.tsx
 'use client' // Mark this as a Client Component
-
+import Image from 'next/image'
 import React from 'react'
 
 interface AvatarProps {
@@ -29,7 +29,7 @@ const Avatar: React.FC<AvatarProps> = ({
       style={{ width: size, height: size }}
     >
       {src ? (
-        <img src={src} alt={alt} className="w-full h-full object-cover rounded-full" />
+        <Image src={src} alt={alt} className="w-full h-full object-cover rounded-full" />
       ) : (
         <span className={`text-lg ${nameClass}`}>{initials}</span> // Apply custom Tailwind classes
       )}

@@ -1,4 +1,4 @@
-export default {
+const gifs = {
   win: [
     'l2SqeqTMuA2h2QKic',
     'aLLZP2AiOCsPLYgi7G',
@@ -34,3 +34,5 @@ export default {
     'elKxBI2fXPurRUqycc',
   ],
 }
+
+export default gifs

@@ -3,7 +3,6 @@ import PageLayout from '@/components/client/PageLayout'
 import { Button } from '@package/ui/src/button'
 import { Size } from '@package/ui/src/size'
 import { Variant } from '@package/ui/src/variant'
-import GoogleSignInButton from '@sso/GoogleSignInButton'
 
 const csci32_assignment_week_3 = () => {
   return (
@@ -76,7 +75,7 @@ const csci32_assignment_week_3 = () => {
           <code>GoogleSignInButton</code> tag anywhere to create a Sign in with Google button. Give it a try!
         </p>
         <br />
-        <GoogleSignInButton />
+        <p>REMOVED!</p>
       </section>
     </PageLayout>
   )

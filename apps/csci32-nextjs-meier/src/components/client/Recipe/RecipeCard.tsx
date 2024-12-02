@@ -1,7 +1,7 @@
-import { IngredientMeasurement } from '@/app/pages/CSCI32Assignments/recipestacker/context/RecipeContext'
 import { Button } from '@package/ui/src/button'
 import { Flex } from '@package/ui/src/flex'
 import { Header } from '@package/ui/src/header'
+import { IngredientMeasurement } from '@package/recipestacker-types/src/types'
 
 export type RecipeCardProps = {
   recipe_id: string
@@ -16,9 +16,7 @@ export default function RecipeCard({ name, description, ingredient_measurements 
       <Flex>
         <Header className="justify-between">{name}</Header>
         <Flex>
-          // onClick alert('Update not implemented')
           <Button>Update</Button>
-          // onClick alert('Delete not implemented')
           <Button>Delete</Button>
         </Flex>
       </Flex>
@@ -27,7 +25,7 @@ export default function RecipeCard({ name, description, ingredient_measurements 
         <ul>
           {ingredient_measurements?.map(({ quantity, unit, ingredient }, index) => (
             <li key={index}>
-              {ingredient.name} - {quantity} {quantity && parseFloat(quantity) > 1 ? unit + 's' : unit}
+              {ingredient.name} - {quantity} {quantity && Number(quantity) > 1 ? unit + 's' : unit}
             </li>
           ))}
         </ul>
