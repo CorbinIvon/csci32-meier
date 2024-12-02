@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { Button } from '@package/ui/button'
 import { Card } from '@package/ui/src/card'
 import { Field } from '@package/ui/field'
@@ -77,7 +77,8 @@ export function RecipeForm({
   }
 
   if (editMode && initialData) {
-    const recipe = initialData
+    const [editedRecipe, setEditedRecipe] = useState(initialData)
+
     return (
       <Wrapper>
         <Header variant="h1">Edit Recipe</Header>
@@ -85,11 +86,11 @@ export function RecipeForm({
           onSubmit={(e) => {
             e.preventDefault()
             handleEdit({
-              recipe_id: recipe.recipe_id,
-              name: recipe.name,
-              description: recipe.description,
-              directions: recipe.directions,
-              ingredient_measurements: recipe.ingredient_measurements.map((im) => ({
+              recipe_id: editedRecipe.recipe_id,
+              name: editedRecipe.name,
+              description: editedRecipe.description,
+              directions: editedRecipe.directions,
+              ingredient_measurements: editedRecipe.ingredient_measurements.map((im) => ({
                 unit: im.unit,
                 quantity: im.quantity,
                 ingredient_name: im.ingredient.name,
@@ -105,9 +106,9 @@ export function RecipeForm({
               <Input
                 id="name"
                 name="name"
-                value={recipe.name}
+                value={editedRecipe.name}
                 onChange={(value) => {
-                  recipe.name = value
+                  setEditedRecipe({ ...editedRecipe, name: value })
                 }}
               />
             </Field>
@@ -116,22 +117,33 @@ export function RecipeForm({
               <Input
                 id="description"
                 name="description"
-                value={recipe.description}
+                value={editedRecipe.description}
                 onChange={(value) => {
-                  recipe.description = value
+                  setEditedRecipe({ ...editedRecipe, description: value })
                 }}
               />
             </Field>
             <Field>
               <Label>Ingredients</Label>
-              {recipe.ingredient_measurements.map((measurement, index) => (
+              {editedRecipe.ingredient_measurements.map((measurement, index) => (
                 <Flex key={index}>
                   <Input
                     id={`ingredient-name-${index}`}
                     name={`ingredient-name-${index}`}
                     value={measurement.ingredient.name}
                     onChange={(value) => {
-                      measurement.ingredient.name = value
+                      const newMeasurements = [...editedRecipe.ingredient_measurements]
+                      newMeasurements[index] = {
+                        ...newMeasurements[index],
+                        ingredient: {
+                          ...newMeasurements[index].ingredient,
+                          name: value,
+                        },
+                      }
+                      setEditedRecipe({
+                        ...editedRecipe,
+                        ingredient_measurements: newMeasurements,
+                      })
                     }}
                     placeholder="Ingredient name"
                   />

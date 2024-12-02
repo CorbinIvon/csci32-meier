@@ -90,11 +90,11 @@ export class RecipeService {
               ingredient: {
                 connectOrCreate: {
                   where: {
-                    ingredient_id: m.ingredient_id || '',
+                    ingredient_id: m.ingredient_id || 'new-' + Math.random(),
                   },
                   create: {
                     name: m.ingredient_name,
-                    description: m.ingredient_description,
+                    description: m.ingredient_description || '',
                   },
                 },
               },

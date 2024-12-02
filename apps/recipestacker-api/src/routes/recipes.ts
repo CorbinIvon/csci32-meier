@@ -7,6 +7,7 @@ import {
   RecipeNotFoundTypeboxType,
   Recipe,
   IngredientMeasurement,
+  IngredientMeasurementDTO,
 } from '@package/recipestacker-types/src/types'
 import { Type } from '@sinclair/typebox'
 
@@ -74,22 +75,18 @@ const recipe: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
           description: request.body.description ?? '',
           directions: request.body.directions ?? '',
           deleted: request.body.deleted,
-          ingredient_measurements: request.body.ingredient_measurements?.map(
-            (im: {
-              unit: string
-              quantity: number
-              ingredient_name: string
-              ingredient_description: string
-              ingredient_id?: string
-            }) => ({
-              unit: im.unit,
-              quantity: im.quantity,
-              ingredient_name: im.ingredient_name,
-              ingredient_description: im.ingredient_description || '',
-              ingredient_id: im.ingredient_id,
-            }),
-          ),
+          ingredient_measurements: request.body.ingredient_measurements?.map((im: IngredientMeasurementDTO) => ({
+            unit: im.unit,
+            quantity: im.quantity,
+            ingredient_name: im.ingredient_name,
+            ingredient_description: im.ingredient_description || '',
+            ingredient_id: im.ingredient_id,
+          })),
         })
+
+        if (!updatedRecipe || !updatedRecipe.ingredient_measurements) {
+          throw new Error('Failed to update recipe')
+        }
 
         return reply.send({
           recipe_id: updatedRecipe.recipe_id,
