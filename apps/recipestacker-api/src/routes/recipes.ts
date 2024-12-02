@@ -35,14 +35,16 @@ const recipe: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         user_id: request.query.user_id,
       })
       if (recipes) {
-        const mappedRecipes = recipes?.map((recipe) => ({
-          recipe_id: recipe.recipe_id,
-          name: recipe.name,
-          description: recipe.description ?? '',
-          directions: recipe.directions,
-          image: recipe.image,
-          ingredient_measurements: recipe.ingredient_measurements,
-        }))
+        const mappedRecipes = recipes
+          ? recipes.map((recipe) => ({
+              recipe_id: recipe.recipe_id,
+              name: recipe.name,
+              description: recipe.description ?? '',
+              directions: recipe.directions,
+              image: recipe.image,
+              ingredient_measurements: recipe.ingredient_measurements,
+            }))
+          : []
         return reply.send(mappedRecipes)
       } else {
         return reply.notFound()

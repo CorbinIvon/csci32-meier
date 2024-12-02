@@ -1,5 +1,15 @@
 import React from 'react'
-import { Recipe, UpdateRecipeDTO, convertToUpdateRecipeDTO } from '@package/recipestacker-types/src/types'
+import { Recipe, convertToUpdateRecipeDTO, Ingredient } from '@package/recipestacker-types/src/types'
+import { Input } from './input'
+
+// Declare env variable type
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      NEXT_PUBLIC_RECIPESTACKER_API_URL: string
+    }
+  }
+}
 
 const API_URL = process.env.NEXT_PUBLIC_RECIPESTACKER_API_URL
 
@@ -20,13 +30,13 @@ export function Card({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (window.confirm('Are you sure you want to delete this recipe? This action can not be undone')) {
-      if (recipe.recipe_id) {
-        const response = await fetch(`${API_URL}/recipes/${recipe.recipe_id}`, {
+      if (editedRecipe.recipe_id) {
+        const response = await fetch(`${API_URL}/recipes/${editedRecipe.recipe_id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ ...recipe, deleted: new Date().toISOString() }),
+          body: JSON.stringify({ ...editedRecipe, deleted: new Date().toISOString() }),
         })
         if (response.ok && onDelete) {
           onDelete()
@@ -92,68 +102,89 @@ export function Card({
         </button>
       </div>
 
-      <input
-        type="text"
+      <Input
+        id="recipe-name"
+        name="recipe-name"
         value={editedRecipe.name}
-        onChange={(e) => setEditedRecipe({ ...editedRecipe, name: e.target.value })}
-        className="text-xl font-bold mb-3 w-full p-1 border rounded"
+        onChange={(value) => setEditedRecipe({ ...editedRecipe, name: value })}
+        className="text-xl font-bold mb-3 w-full"
+        placeholder="Recipe name"
       />
+
       <textarea
         value={editedRecipe.description}
         onChange={(e) => setEditedRecipe({ ...editedRecipe, description: e.target.value })}
         className="w-full p-1 mb-4 border rounded"
+        placeholder="Recipe description"
       />
+
       {editedRecipe.ingredient_measurements.length > 0 && (
         <ul className="space-y-2 text-sm">
           {editedRecipe.ingredient_measurements.map((measurement, index) => (
             <li key={index} className="flex items-center gap-2">
-              <input
-                type="text"
-                value={measurement.ingredient.name}
-                onChange={(e) => {
+              <Input
+                id={`ingredient-${index}`}
+                name={`ingredient-${index}`}
+                value={measurement.ingredient?.name || ''}
+                onChange={(value) => {
                   const newMeasurements = [...editedRecipe.ingredient_measurements]
-                  if (newMeasurements && newMeasurements[index]) {
-                    newMeasurements[index] = {
-                      ...newMeasurements[index],
-                      ingredient: {
-                        ...newMeasurements[index].ingredient,
-                        name: e.target.value,
-                      },
-                    }
-                    setEditedRecipe({ ...editedRecipe, ingredient_measurements: newMeasurements })
+                  newMeasurements[index] = {
+                    ...newMeasurements[index],
+                    ingredient: {
+                      ...measurement.ingredient,
+                      name: value,
+                      ingredient_id: measurement.ingredient.ingredient_id || '',
+                      description: measurement.ingredient.description || '',
+                    } as Ingredient,
+                    unit: measurement.unit || '',
+                    quantity: measurement.quantity || 0,
                   }
+                  setEditedRecipe({ ...editedRecipe, ingredient_measurements: newMeasurements })
                 }}
-                className="flex-grow p-1 border rounded"
+                className="flex-grow"
+                placeholder="Ingredient name"
               />
-              <input
+              <Input
+                id={`quantity-${index}`}
+                name={`quantity-${index}`}
                 type="number"
-                value={measurement.quantity}
-                onChange={(e) => {
+                value={measurement.quantity || 0}
+                onChange={(value) => {
                   const newMeasurements = [...editedRecipe.ingredient_measurements]
-                  if (newMeasurements && newMeasurements[index]) {
-                    newMeasurements[index] = {
-                      ...newMeasurements[index],
-                      quantity: Number(e.target.value),
-                    }
-                    setEditedRecipe({ ...editedRecipe, ingredient_measurements: newMeasurements })
+                  newMeasurements[index] = {
+                    ...newMeasurements[index],
+                    quantity: Number(value),
+                    unit: measurement.unit || '',
+                    ingredient: {
+                      ...measurement.ingredient,
+                      ingredient_id: measurement.ingredient.ingredient_id || '',
+                      description: measurement.ingredient.description || '',
+                    } as Ingredient,
                   }
+                  setEditedRecipe({ ...editedRecipe, ingredient_measurements: newMeasurements })
                 }}
-                className="w-20 p-1 border rounded"
+                className="w-20"
               />
-              <input
-                type="text"
+              <Input
+                id={`unit-${index}`}
+                name={`unit-${index}`}
                 value={measurement.unit}
-                onChange={(e) => {
+                onChange={(value) => {
                   const newMeasurements = [...editedRecipe.ingredient_measurements]
-                  if (newMeasurements && newMeasurements[index]) {
-                    newMeasurements[index] = {
-                      ...newMeasurements[index],
-                      unit: e.target.value,
-                    }
-                    setEditedRecipe({ ...editedRecipe, ingredient_measurements: newMeasurements })
+                  newMeasurements[index] = {
+                    ...newMeasurements[index],
+                    unit: value,
+                    quantity: measurement.quantity || 0,
+                    ingredient: {
+                      ...measurement.ingredient,
+                      ingredient_id: measurement.ingredient.ingredient_id || '',
+                      description: measurement.ingredient.description || '',
+                    } as Ingredient,
                   }
+                  setEditedRecipe({ ...editedRecipe, ingredient_measurements: newMeasurements })
                 }}
-                className="w-20 p-1 border rounded"
+                className="w-20"
+                placeholder="Unit"
               />
             </li>
           ))}
