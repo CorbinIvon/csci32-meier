@@ -166,6 +166,19 @@ export function RecipeForm({
                     }}
                     placeholder="Unit"
                   />
+                  <Button
+                    type="button"
+                    className="px-2"
+                    onClick={() => {
+                      const newMeasurements = editedRecipe.ingredient_measurements.filter((_, i) => i !== index)
+                      setEditedRecipe({
+                        ...editedRecipe,
+                        ingredient_measurements: newMeasurements,
+                      })
+                    }}
+                  >
+                    ✕
+                  </Button>
                 </Flex>
               ))}
             </Field>
@@ -258,6 +271,16 @@ export function RecipeForm({
                   }}
                   placeholder="Unit"
                 />
+                <Button
+                  type="button"
+                  className="px-2"
+                  onClick={() => {
+                    const measurements = newRecipe.ingredient_measurements.filter((_, i) => i !== index)
+                    setNewRecipe({ ...newRecipe, ingredient_measurements: measurements })
+                  }}
+                >
+                  ✕
+                </Button>
               </Flex>
             ))}
             <Button
