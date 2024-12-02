@@ -24,14 +24,11 @@ async function putHelper({ path, params }: { path: string; params: UpdateRecipeD
 }
 
 export function deleteRecipe(recipe_id: string) {
-  return putHelper({
-    path: `/recipes/${recipe_id}`,
-    params: {
-      recipe_id, // Add the required recipe_id
-      deleted: new Date().toISOString(),
-    },
+  return fetch(`${process.env.NEXT_PUBLIC_RECIPESTACKER_API_URL}/recipes/${recipe_id}`, {
+    method: 'DELETE',
   })
 }
+
 export function createRecipe(params: CreateRecipeDTO) {
   return postHelper({ path: '/recipes', body: JSON.stringify(params) })
 }

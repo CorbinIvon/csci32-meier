@@ -58,9 +58,15 @@ export interface UpdateRecipeDTO {
     recipe_id: string;
     name?: string;
     description?: string;
-    deleted?: Date | string | null;
     directions?: string;
-    ingredient_measurements?: IngredientMeasurementDTO[];
+    deleted?: string | null;
+    ingredient_measurements?: {
+        unit: string;
+        quantity: number;
+        ingredient_name: string;
+        ingredient_description: string;
+        ingredient_id?: string;
+    }[];
 }
 export interface CreateIngredientDTO extends BaseIngredient {
 }
@@ -156,14 +162,14 @@ export declare const UpdateRecipeTypeboxType: import("@sinclair/typebox").TObjec
     name: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     description: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     directions: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+    deleted: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>>;
     ingredient_measurements: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TArray<import("@sinclair/typebox").TObject<{
         unit: import("@sinclair/typebox").TString;
         quantity: import("@sinclair/typebox").TNumber;
-        ingredient_id: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
         ingredient_name: import("@sinclair/typebox").TString;
         ingredient_description: import("@sinclair/typebox").TString;
+        ingredient_id: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     }>>>;
-    deleted: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>>;
 }>;
 export declare const CreateRecipeTypeboxType: import("@sinclair/typebox").TObject<{
     name: import("@sinclair/typebox").TString;

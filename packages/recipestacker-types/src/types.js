@@ -56,14 +56,14 @@ exports.UpdateRecipeTypeboxType = typebox_1.Type.Object({
     name: typebox_1.Type.Optional(typebox_1.Type.String()),
     description: typebox_1.Type.Optional(typebox_1.Type.String()),
     directions: typebox_1.Type.Optional(typebox_1.Type.String()),
+    deleted: typebox_1.Type.Optional(typebox_1.Type.Union([typebox_1.Type.String(), typebox_1.Type.Null()])),
     ingredient_measurements: typebox_1.Type.Optional(typebox_1.Type.Array(typebox_1.Type.Object({
         unit: typebox_1.Type.String(),
         quantity: typebox_1.Type.Number(),
-        ingredient_id: typebox_1.Type.Optional(typebox_1.Type.String()),
         ingredient_name: typebox_1.Type.String(),
         ingredient_description: typebox_1.Type.String(),
+        ingredient_id: typebox_1.Type.Optional(typebox_1.Type.String()),
     }))),
-    deleted: typebox_1.Type.Optional(typebox_1.Type.Union([typebox_1.Type.String(), typebox_1.Type.Null()])),
 });
 exports.CreateRecipeTypeboxType = typebox_1.Type.Object({
     name: typebox_1.Type.String(),

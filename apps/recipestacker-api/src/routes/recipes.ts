@@ -35,16 +35,14 @@ const recipe: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         user_id: request.query.user_id,
       })
       if (recipes) {
-        const mappedRecipes = recipes
-          ? recipes.map((recipe) => ({
-              recipe_id: recipe.recipe_id,
-              name: recipe.name,
-              description: recipe.description ?? '',
-              directions: recipe.directions,
-              image: recipe.image,
-              ingredient_measurements: recipe.ingredient_measurements,
-            }))
-          : []
+        const mappedRecipes = recipes.map((recipe) => ({
+          recipe_id: recipe.recipe_id,
+          name: recipe.name,
+          description: recipe.description || '', // Ensure string type
+          directions: recipe.directions || '', // Ensure string type
+          image: recipe.image,
+          ingredient_measurements: recipe.ingredient_measurements,
+        }))
         return reply.send(mappedRecipes)
       } else {
         return reply.notFound()
@@ -70,24 +68,36 @@ const recipe: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     },
     async function (request: any, reply) {
       try {
-        // TODO: Fix me!
         const updatedRecipe = await fastify.recipeService.updateOneRecipe({
           recipe_id: request.params.id,
-          name: request.body.name,
-          description: request.body.description,
-          directions: request.body.directions,
-          ingredient_measurements: request.body.ingredient_measurements?.map((im: IngredientMeasurement) => ({
-            unit: im.unit,
-            quantity: im.quantity,
-            ingredient_name: im.ingredient.name,
-            ingredient_description: im.ingredient.description || '',
-            ingredient_id: im.ingredient_id,
-          })),
+          name: request.body.name ?? '',
+          description: request.body.description ?? '',
+          directions: request.body.directions ?? '',
+          deleted: request.body.deleted,
+          ingredient_measurements: request.body.ingredient_measurements?.map(
+            (im: {
+              unit: string
+              quantity: number
+              ingredient_name: string
+              ingredient_description: string
+              ingredient_id?: string
+            }) => ({
+              unit: im.unit,
+              quantity: im.quantity,
+              ingredient_name: im.ingredient_name,
+              ingredient_description: im.ingredient_description || '',
+              ingredient_id: im.ingredient_id,
+            }),
+          ),
         })
 
         return reply.send({
-          ...updatedRecipe,
-          description: updatedRecipe.description ?? '',
+          recipe_id: updatedRecipe.recipe_id,
+          name: updatedRecipe.name,
+          description: updatedRecipe.description || '',
+          directions: updatedRecipe.directions || '',
+          image: updatedRecipe.image,
+          ingredient_measurements: updatedRecipe.ingredient_measurements,
         })
       } catch (error) {
         fastify.log.error(error)
@@ -154,22 +164,29 @@ const recipe: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       schema: {
         tags: ['Endpoint: Delete a recipe'],
         description: 'Endpoint to delete a recipe',
+        params: Type.Object({
+          id: Type.String(),
+        }),
+        // Remove body validation entirely
         response: {
-          200: Type.Object({ message: Type.String() }),
+          200: Type.Object({
+            success: Type.Boolean(),
+            message: Type.String(),
+          }),
           404: RecipeNotFoundTypeboxType,
         },
       },
     },
-    async function (request: any, reply) {
+    async function (request, reply) {
       const success = await fastify.recipeService.deleteOneRecipe({
         recipe_id: request.params.id,
       })
 
       if (!success) {
-        return reply.notFound()
+        return reply.notFound('Recipe not found')
       }
 
-      return { message: 'Recipe deleted successfully' }
+      return { success: true, message: 'Recipe deleted successfully' }
     },
   )
 }

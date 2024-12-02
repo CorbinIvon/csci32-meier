@@ -1,17 +1,9 @@
-import React from 'react'
-import { Recipe, convertToUpdateRecipeDTO, Ingredient } from '@package/recipestacker-types/src/types'
+import { type ReactElement, useState } from 'react'
+import { Recipe, UpdateRecipeDTO, Ingredient } from '@package/recipestacker-types/src/types'
 import { Input } from './input'
 
-// Declare env variable type
-declare global {
-  namespace NodeJS {
-    interface ProcessEnv {
-      NEXT_PUBLIC_RECIPESTACKER_API_URL: string
-    }
-  }
-}
-
-const API_URL = process.env.NEXT_PUBLIC_RECIPESTACKER_API_URL
+// Use a type-safe way to handle the API URL
+const API_URL = typeof window !== 'undefined' ? process.env.NEXT_PUBLIC_RECIPESTACKER_API_URL || '' : ''
 
 export function Card({
   recipe,
@@ -23,31 +15,41 @@ export function Card({
   className?: string
   onDelete?: () => void
   onEdit?: (recipe: Recipe) => void
-}): JSX.Element {
-  const [isEditing, setIsEditing] = React.useState(false)
-  const [editedRecipe, setEditedRecipe] = React.useState<Recipe>(recipe)
+}): ReactElement {
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedRecipe, setEditedRecipe] = useState<Recipe>(recipe)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (window.confirm('Are you sure you want to delete this recipe? This action can not be undone')) {
-      if (editedRecipe.recipe_id) {
+      try {
         const response = await fetch(`${API_URL}/recipes/${editedRecipe.recipe_id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ ...editedRecipe, deleted: new Date().toISOString() }),
+          method: 'DELETE',
         })
         if (response.ok && onDelete) {
           onDelete()
         }
+      } catch (error) {
+        console.error('Failed to delete recipe:', error)
       }
     }
   }
 
   const handleEdit = async () => {
     if (onEdit && editedRecipe.recipe_id) {
-      const updateDTO = convertToUpdateRecipeDTO(editedRecipe)
+      const updateDTO: UpdateRecipeDTO = {
+        recipe_id: editedRecipe.recipe_id,
+        name: editedRecipe.name,
+        description: editedRecipe.description,
+        directions: editedRecipe.directions,
+        ingredient_measurements: editedRecipe.ingredient_measurements.map((im) => ({
+          unit: im.unit,
+          quantity: im.quantity,
+          ingredient_name: im.ingredient.name,
+          ingredient_description: im.ingredient.description || '',
+          ingredient_id: im.ingredient.ingredient_id,
+        })),
+      }
 
       try {
         const response = await fetch(`${API_URL}/recipes/${editedRecipe.recipe_id}`, {

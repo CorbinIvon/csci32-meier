@@ -163,15 +163,9 @@ export class RecipeService {
 
   async createOneRecipe(props: CreateOneRecipeProps) {
     const { name, description, ingredient_measurements } = props
-    const { user_id } = await this.getOrCreateFirstUser()
-    const directions = '' //TODO: Implement directions.
+    const directions = '' // TODO: Implement directions.
     const recipe = await this.prisma.recipe.create({
       data: {
-        User: {
-          connect: {
-            user_id: user_id,
-          },
-        },
         name,
         description,
         directions,
@@ -192,6 +186,13 @@ export class RecipeService {
             quantity: measurement.quantity,
             unit: measurement.unit,
           })),
+        },
+      },
+      include: {
+        ingredient_measurements: {
+          include: {
+            ingredient: true,
+          },
         },
       },
     })

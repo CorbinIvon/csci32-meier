@@ -71,9 +71,15 @@ export interface UpdateRecipeDTO {
   recipe_id: string
   name?: string
   description?: string
-  deleted?: Date | string | null
   directions?: string
-  ingredient_measurements?: IngredientMeasurementDTO[]
+  deleted?: string | null
+  ingredient_measurements?: {
+    unit: string
+    quantity: number
+    ingredient_name: string
+    ingredient_description: string
+    ingredient_id?: string
+  }[]
 }
 
 export interface CreateIngredientDTO extends BaseIngredient {}
@@ -207,18 +213,18 @@ export const UpdateRecipeTypeboxType = Type.Object({
   name: Type.Optional(Type.String()),
   description: Type.Optional(Type.String()),
   directions: Type.Optional(Type.String()),
+  deleted: Type.Optional(Type.Union([Type.String(), Type.Null()])),
   ingredient_measurements: Type.Optional(
     Type.Array(
       Type.Object({
         unit: Type.String(),
         quantity: Type.Number(),
-        ingredient_id: Type.Optional(Type.String()),
         ingredient_name: Type.String(),
         ingredient_description: Type.String(),
+        ingredient_id: Type.Optional(Type.String()),
       }),
     ),
   ),
-  deleted: Type.Optional(Type.Union([Type.String(), Type.Null()])),
 })
 
 export const CreateRecipeTypeboxType = Type.Object({
